@@ -1,0 +1,336 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Kitti数据集Object Detection总结 | Hello World</title><meta name="keywords" content="WJQ的博客"><meta name="author" content="WJQ"><meta name="copyright" content="WJQ"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Kitti数据集Object Detection总结数据采集The KITTI Vision Benchmark Suite (cvlibs.net)  1个惯性导航系统（GPS&#x2F;IMU）：OXTS RT 3003 1个激光扫描仪：Velodyne HDL-64E 2个灰度相机，140万像素：Point Grey Flea 2（FL2-14S3M-C） 2个彩色相机，140万像素：Poi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kitti数据集Object Detection总结">
+<meta property="og:url" content="https://dl4wjq.github.io/2022/03/05/Kitti%E6%95%B0%E6%8D%AE%E9%9B%86Object%20Detection%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Hello World">
+<meta property="og:description" content="Kitti数据集Object Detection总结数据采集The KITTI Vision Benchmark Suite (cvlibs.net)  1个惯性导航系统（GPS&#x2F;IMU）：OXTS RT 3003 1个激光扫描仪：Velodyne HDL-64E 2个灰度相机，140万像素：Point Grey Flea 2（FL2-14S3M-C） 2个彩色相机，140万像素：Poi">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2022-03-05T05:37:36.000Z">
+<meta property="article:modified_time" content="2022-03-05T14:12:32.989Z">
+<meta property="article:author" content="WJQ">
+<meta property="article:tag" content="WJQ的博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://dl4wjq.github.io/2022/03/05/Kitti%E6%95%B0%E6%8D%AE%E9%9B%86Object%20Detection%E6%80%BB%E7%BB%93/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Kitti数据集Object Detection总结',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-03-05 22:12:32'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">2</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 链接</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hello World</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 链接</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Kitti数据集Object Detection总结</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-03-05T05:37:36.000Z" title="发表于 2022-03-05 13:37:36">2022-03-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-03-05T14:12:32.989Z" title="更新于 2022-03-05 22:12:32">2022-03-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Kitti数据集Object Detection总结"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Kitti数据集Object-Detection总结"><a href="#Kitti数据集Object-Detection总结" class="headerlink" title="Kitti数据集Object Detection总结"></a>Kitti数据集Object Detection总结</h1><h2 id="数据采集"><a href="#数据采集" class="headerlink" title="数据采集"></a>数据采集</h2><p><a target="_blank" rel="noopener" href="http://www.cvlibs.net/datasets/kitti/setup.php">The KITTI Vision Benchmark Suite (cvlibs.net)</a></p>
+<ul>
+<li>1个惯性导航系统（GPS&#x2F;IMU）：OXTS RT 3003</li>
+<li>1个激光扫描仪：Velodyne HDL-64E</li>
+<li>2个灰度相机，140万像素：Point Grey Flea 2（FL2-14S3M-C）</li>
+<li>2个彩色相机，140万像素：Point Grey Flea 2（FL2-14S3C-C）</li>
+<li>4个变焦镜头，4-8mm：Edmund Optics NT59-917</li>
+</ul>
+<p>激光扫描仪以每秒 10 帧的速度旋转，每个周期捕获大约 100k 个点。激光扫描仪的垂直分辨率为 64。摄像机安装在与地平面大致水平的位置。使用 libdc 的格式 7 模式将相机图像裁剪为 1382 x 512 像素的大小。校正后，图像会稍微变小。激光扫描仪（面向前方时）以每秒 10 帧的速度触发相机，快门时间动态调整（最大快门时间：2 毫秒）。下图说明了我们相对于车辆的传感器设置。请注意，校准文件和开发套件中提供了有关校准参数的更多信息（参见原始数据部分）。</p>
+<p><img src="http://www.cvlibs.net/datasets/kitti/images/setup_top_view.png"></p>
+<p><img src="http://www.cvlibs.net/datasets/kitti/images/passat_sensors_920.png" alt="[passat_sensors_920.png (920×793) (cvlibs.net)](http://www.cvlibs.net/datasets/kitti/images/passat_sensors_920.png)"></p>
+<p>所有坐标系都是右手坐标系。</p>
+<ul>
+<li>相机：x 轴向右，y 轴向下，z 轴向前</li>
+<li>Velodyne(激光雷达)：x 轴向前，y 轴向左，z轴向上</li>
+<li>GPS &#x2F; IMU：x 轴向前，y 轴向左，z 轴向上</li>
+</ul>
+<h2 id="数据构成"><a href="#数据构成" class="headerlink" title="数据构成"></a>数据构成</h2><ul>
+<li>camera_2 image (.png)</li>
+<li>camera_2 label (.txt)：只在training部分提供</li>
+<li>calibration (.txt)</li>
+<li>velodyne point cloud (.bin)</li>
+</ul>
+<h2 id="image-02"><a href="#image-02" class="headerlink" title="image_02"></a>image_02</h2><p>四个摄像机图像存储在以下目录中</p>
+<ul>
+<li>‘image_00’: 左校正灰度图像序列</li>
+<li>‘image_01’: 右校正灰度图像序列</li>
+<li>‘image_02’: 左校正彩色图像序列</li>
+<li>‘image_03’: 右校正彩色图像序列</li>
+</ul>
+<h2 id="veolyde"><a href="#veolyde" class="headerlink" title="veolyde"></a>veolyde</h2><p>节省空间，所有扫描都作为 Nx4 浮点矩阵存储为二进制</p>
+<p>其中前 3 个值对应于 x,y 和 z，最后一个值是反射率信息r。所有扫描以行对齐方式存储，这意味着前4个值对应第一次测量。因为每次扫描可能有不同的</p>
+<ul>
+<li>数据组织形式：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x1 y1 z1 r1 x2 y2 z2 r2</span><br><span class="line">x3 y3 z3 r3 x3 y3 z3 r3 </span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="label-txt-标签文件"><a href="#label-txt-标签文件" class="headerlink" title="label.txt 标签文件"></a>label.txt 标签文件</h2><ul>
+<li>000015.txt</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Car 0.89 0 2.29 0.00 194.70 414.71 373.00 1.57 1.67 4.14 -2.75 1.70 4.10 1.72</span><br><span class="line">Pedestrian 0.00 1 0.71 1021.76 133.28 1101.39 316.63 1.81 1.06 0.73 4.75 1.33 7.59 1.25</span><br><span class="line">Pedestrian 0.00 0 -1.58 672.23 171.73 690.13 224.33 1.73 0.84 0.86 2.46 1.41 24.14 -1.48</span><br><span class="line">Pedestrian 0.00 0 -1.59 692.68 169.14 712.48 224.03 1.81 0.90 0.95 3.30 1.40 24.22 -1.46</span><br><span class="line">Pedestrian 0.00 0 -1.46 537.84 168.08 560.90 224.34 1.78 0.92 1.01 -1.79 1.36 23.30 -1.54</span><br><span class="line">DontCare -1 -1 -10 916.14 175.59 973.32 253.55 -1 -1 -1 -1000 -1000 -1000 -10</span><br><span class="line">DontCare -1 -1 -10 628.80 173.19 653.95 196.66 -1 -1 -1 -1000 -1000 -1000 -10</span><br><span class="line">DontCare -1 -1 -10 610.47 175.76 625.72 205.87 -1 -1 -1 -1000 -1000 -1000 -10</span><br><span class="line">DontCare -1 -1 -10 766.54 168.32 841.38 261.86 -1 -1 -1 -1000 -1000 -1000 -10</span><br><span class="line">DontCare -1 -1 -10 464.22 177.67 508.93 230.69 -1 -1 -1 -1000 -1000 -1000 -10</span><br></pre></td></tr></table></figure>
+
+
+
+<table>
+<thead>
+<tr>
+<th>顺序</th>
+<th>名称</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>type-类型</td>
+<td>Pedestrian</td>
+<td>Car、Van、Truck、Pedestrian、Person_sitting、Cyclist、Tram、Misc or DontCare：这里，”DontCare “的标签表示物体没有被标记的区域。例如，因为它们离激光扫描仪太远了。</td>
+</tr>
+<tr>
+<td>2</td>
+<td>truncated</td>
+<td>0.00</td>
+<td>截断程度，从0（非截断）到1（截断）的浮点数，截断是指物体离开图像边界。</td>
+</tr>
+<tr>
+<td>3</td>
+<td>occluded</td>
+<td>1</td>
+<td>遮挡程度，0表示无遮挡</td>
+</tr>
+<tr>
+<td>4</td>
+<td>alpha</td>
+<td>0.71</td>
+<td>观察物体的角度，取值范围：$[-\pi, \pi]$</td>
+</tr>
+<tr>
+<td>5-6</td>
+<td>2D BBox</td>
+<td>1021.76 133.28</td>
+<td>图像中物体的2D BBox左上角的像素坐标</td>
+</tr>
+<tr>
+<td>7-8</td>
+<td></td>
+<td>1101.39 316.63</td>
+<td>图像中物体的2D BBox右下角的像素坐标</td>
+</tr>
+<tr>
+<td>9-11</td>
+<td>dimensions</td>
+<td>1.81 1.06 0.73</td>
+<td>三维物体尺寸：高height、宽width、长length（单位：米）。</td>
+</tr>
+<tr>
+<td>12-14</td>
+<td>location-位置</td>
+<td>4.75 1.33 7.59</td>
+<td>三维物体在相机坐标中的位置x,y,z（单位：米）</td>
+</tr>
+<tr>
+<td>15</td>
+<td>rotation_y</td>
+<td>1.25</td>
+<td>在相机坐标系中围绕Y轴的旋转角度（物体朝向），取值范围：$[-\pi, \pi]$</td>
+</tr>
+<tr>
+<td>16</td>
+<td>score</td>
+<td>None</td>
+<td>仅用于结果。浮点数，表示对检测的置信度，需要p&#x2F;r曲线，越高越好。</td>
+</tr>
+</tbody></table>
+<p>rotationy和阿尔法之间的区别是，rotationy是直接以相机坐标给出的，而alpha也考虑了从相机中心到物体中心的矢量以计算物体相对于摄像机的相对方向。<br>例如，一辆汽车沿相机的X轴朝向对应于rotationy&#x3D;0。不管它在X&#x2F;Z平面上的位置如何（鸟瞰），</p>
+<p>而只有当这个物体位于相机的Z轴上时α才是零。当把车从Z轴上移开时，观察角度将会改变。</p>
+<h2 id="calib-txt-标定文件"><a href="#calib-txt-标定文件" class="headerlink" title="calib.txt 标定文件"></a>calib.txt 标定文件</h2><h3 id="000015"><a href="#000015" class="headerlink" title="000015"></a>000015</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">P0: </span><br><span class="line">7.183351000000e+02 0.000000000000e+00 6.003891000000e+02 0.000000000000e+00 </span><br><span class="line">0.000000000000e+00 7.183351000000e+02 1.815122000000e+02 0.000000000000e+00 </span><br><span class="line">0.000000000000e+00 0.000000000000e+00 1.000000000000e+00 0.000000000000e+00</span><br><span class="line"></span><br><span class="line">P1: </span><br><span class="line">7.183351000000e+02 0.000000000000e+00 6.003891000000e+02 -3.858846000000e+02 </span><br><span class="line">0.000000000000e+00 7.183351000000e+02 1.815122000000e+02 0.000000000000e+00 </span><br><span class="line">0.000000000000e+00 0.000000000000e+00 1.000000000000e+00 0.000000000000e+00</span><br><span class="line"></span><br><span class="line">P2: </span><br><span class="line">7.183351000000e+02 0.000000000000e+00 6.003891000000e+02 4.450382000000e+01 </span><br><span class="line">0.000000000000e+00 7.183351000000e+02 1.815122000000e+02 -5.951107000000e-01 </span><br><span class="line">0.000000000000e+00 0.000000000000e+00 1.000000000000e+00 2.616315000000e-03</span><br><span class="line">0                  0                  0                  1</span><br><span class="line"></span><br><span class="line">P3: </span><br><span class="line">7.183351000000e+02 0.000000000000e+00 6.003891000000e+02 -3.363147000000e+02 </span><br><span class="line">0.000000000000e+00 7.183351000000e+02 1.815122000000e+02 3.159867000000e+00 </span><br><span class="line">0.000000000000e+00 0.000000000000e+00 1.000000000000e+00 5.323834000000e-03</span><br><span class="line"></span><br><span class="line">R0_rect: </span><br><span class="line">9.999478000000e-01 9.791707000000e-03 -2.925305000000e-03 </span><br><span class="line">-9.806939000000e-03 9.999382000000e-01 -5.238719000000e-03 </span><br><span class="line">2.873828000000e-03 5.267134000000e-03 9.999820000000e-01</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Tr_velo_to_cam: </span><br><span class="line">7.755449000000e-03 -9.999694000000e-01 -1.014303000000e-03 -7.275538000000e-03 </span><br><span class="line">2.294056000000e-03 1.032122000000e-03 -9.999968000000e-01 -6.324057000000e-02 </span><br><span class="line">9.999673000000e-01 7.753097000000e-03 2.301990000000e-03 -2.670414000000e-01</span><br><span class="line"></span><br><span class="line">Tr_imu_to_velo: </span><br><span class="line">9.999976000000e-01 7.553071000000e-04 -2.035826000000e-03 -8.086759000000e-01 </span><br><span class="line">-7.854027000000e-04 9.998898000000e-01 -1.482298000000e-02 3.195559000000e-01 </span><br><span class="line">2.024406000000e-03 1.482454000000e-02 9.998881000000e-01 -7.997231000000e-01</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="含义"><a href="#含义" class="headerlink" title="含义"></a>含义</h3><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>左边灰度相机</td>
+</tr>
+<tr>
+<td>1</td>
+<td>右边灰度相机</td>
+</tr>
+<tr>
+<td>2</td>
+<td>左边彩色相机</td>
+</tr>
+<tr>
+<td>3</td>
+<td>右边彩色相机</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p>P2：标号为2的摄像机的内参矩阵，(另一种说法为：<strong>单应性矩阵（Homography Matrix）</strong>投影矩阵)</p>
+</li>
+<li><p>R0_rect：相机0的矫正旋转矩阵</p>
+</li>
+<li><p>Tr_velo_to_cam：点云到相机转换的外参矩阵</p>
+</li>
+</ul>
+<h3 id="计算"><a href="#计算" class="headerlink" title="计算"></a>计算</h3><p>Velodyne坐标投射一个点$x$到左边(2)的彩色图像中$y$。<br>$$<br>y &#x3D; P2 * R0_rect * Tr_velo_ to_cam * x<br>$$<br>对于右边的彩色图像，将$P2$替换为$P3$</p>
+<p><strong>注意</strong>：所有的矩阵都是以行为单位存储的</p>
+<ul>
+<li><p>Px为$3 \times 4$矩阵</p>
+<ul>
+<li>$$<br>P_{rect}^{(i)}&#x3D;<br>\begin{bmatrix}<br> f_{u}^{(i)} &amp; 0 &amp; c_{u}^{(i)} &amp; -f_{u}^{(i)}b_{x}^{(i)}\<br> 0 &amp; f_{v}^{(i)} &amp; c_{v}^{(i)} &amp; \ 0<br> 0 &amp; 0 &amp; 1 &amp; 0<br>\end{bmatrix}<br>$$</li>
+</ul>
+</li>
+<li><p>R0_rect包含一个$3 \times 3$矩阵，你需要通过在右下角添加一个1和在其他地方添加$0$来扩展成一个4x4矩阵</p>
+</li>
+<li><p>Tr_xxx是一个3x4矩阵(R|t)，你需要用同样的方法将其扩展为一个4x4矩阵 </p>
+</li>
+<li><p>$y$是最终映射得到的图像坐标，是一个$3 \times 1$的列向量， $y &#x3D; [x_{cam}; y_{cam}; Z_{c} ]$ 。为了变换成齐次坐标的形式，需要做一个归一化，除以$Z_c$</p>
+</li>
+<li><p>$x$为点云数据，$[x, y, z, 1]$</p>
+</li>
+</ul>
+<h3 id="解释"><a href="#解释" class="headerlink" title="解释"></a>解释</h3><ul>
+<li><p>Tr_velo_to_cam * x ：是将Velodyne坐标中的点x投影到编号为0的相机（参考相机）坐标系中</p>
+</li>
+<li><p>R0_rect *Tr_velo_to_cam * x ：是将Velodyne坐标中的点x投影到编号为0的相机（参考相机）坐标系中，再修正</p>
+</li>
+<li><p>P_rect_2 * R0_rect *Tr_velo_to_cam * x  ：是将Velodyne坐标中的点x投影到编号为0的相机（参考相机）坐标系中，再修正，然后投影到编号为2的相机（左彩色相机）</p>
+</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/yanii/kitti-pcl/blob/master/KITTI_README.TXT">kitti-pcl的README文件</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://medium.com/test-ttile/kitti-3d-object-detection-dataset-d78a762b5a4">KITTI 3D Object Detection Dataset Medium</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/whatdhack/computer_vision">Computer vision related codes</a></p>
+</li>
+<li><p>可视化：<a target="_blank" rel="noopener" href="https://github.com/godspeed1989/kitti-velodyne-viewer">kitti-velodyne-viewer: view kitti lidar point cloud with bounding box label </a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/llfctt/p/9475659.html">kitti数据集标定文件解析</a></p>
+</li>
+<li><p>官方论文：<a target="_blank" rel="noopener" href="https://www.researchgate.net/publication/258140919_Vision_meets_robotics_the_KITTI_dataset">(PDF) Vision meets robotics: the KITTI dataset (researchgate.net)</a></p>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">WJQ</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://dl4wjq.github.io/2022/03/05/Kitti%E6%95%B0%E6%8D%AE%E9%9B%86Object%20Detection%E6%80%BB%E7%BB%93/">https://dl4wjq.github.io/2022/03/05/Kitti%E6%95%B0%E6%8D%AE%E9%9B%86Object%20Detection%E6%80%BB%E7%BB%93/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://dl4wjq.github.io" target="_blank">Hello World</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/03/05/hello-world/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Hello World</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">WJQ</div><div class="author-info__description">Record my learning</div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">2</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/dl4wjq" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/dl2wjq@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Kitti%E6%95%B0%E6%8D%AE%E9%9B%86Object-Detection%E6%80%BB%E7%BB%93"><span class="toc-number">1.</span> <span class="toc-text">Kitti数据集Object Detection总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86"><span class="toc-number">1.1.</span> <span class="toc-text">数据采集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%9E%84%E6%88%90"><span class="toc-number">1.2.</span> <span class="toc-text">数据构成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#image-02"><span class="toc-number">1.3.</span> <span class="toc-text">image_02</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#veolyde"><span class="toc-number">1.4.</span> <span class="toc-text">veolyde</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#label-txt-%E6%A0%87%E7%AD%BE%E6%96%87%E4%BB%B6"><span class="toc-number">1.5.</span> <span class="toc-text">label.txt 标签文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#calib-txt-%E6%A0%87%E5%AE%9A%E6%96%87%E4%BB%B6"><span class="toc-number">1.6.</span> <span class="toc-text">calib.txt 标定文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#000015"><span class="toc-number">1.6.1.</span> <span class="toc-text">000015</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AB%E4%B9%89"><span class="toc-number">1.6.2.</span> <span class="toc-text">含义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97"><span class="toc-number">1.6.3.</span> <span class="toc-text">计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%87%8A"><span class="toc-number">1.6.4.</span> <span class="toc-text">解释</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">2.</span> <span class="toc-text">参考</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/03/05/Kitti%E6%95%B0%E6%8D%AE%E9%9B%86Object%20Detection%E6%80%BB%E7%BB%93/" title="Kitti数据集Object Detection总结"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Kitti数据集Object Detection总结"/></a><div class="content"><a class="title" href="/2022/03/05/Kitti%E6%95%B0%E6%8D%AE%E9%9B%86Object%20Detection%E6%80%BB%E7%BB%93/" title="Kitti数据集Object Detection总结">Kitti数据集Object Detection总结</a><time datetime="2022-03-05T05:37:36.000Z" title="发表于 2022-03-05 13:37:36">2022-03-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/05/hello-world/" title="Hello World"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2022/03/05/hello-world/" title="Hello World">Hello World</a><time datetime="2022-03-05T05:16:42.024Z" title="发表于 2022-03-05 13:16:42">2022-03-05</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By WJQ</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
