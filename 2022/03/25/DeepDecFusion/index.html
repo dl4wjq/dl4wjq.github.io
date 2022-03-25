@@ -1,0 +1,296 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>DeepDecFusion | Hello World</title><meta name="keywords" content="图像处理,深度学习,python"><meta name="author" content="WJQ"><meta name="copyright" content="WJQ"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="DeepDecFusion摘要：图像分解是图像处理领域的一个重要课题。它可以从源图像中提取显着特征。我们提出了一种新的基于卷积神经网络的图像分解方法。这种方法可以应用于许多图像处理任务。在本文中，我们将图像分解网络应用于图像融合任务。我们输入红外图像和可见光图像，分别分解为三个高频特征图像和一个低频特征图像。使用特定的融合策略对两组特征图像进行融合，得到融合特征图像。最后对特征图像进行重构，得到融">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DeepDecFusion">
+<meta property="og:url" content="https://dl4wjq.github.io/2022/03/25/DeepDecFusion/index.html">
+<meta property="og:site_name" content="Hello World">
+<meta property="og:description" content="DeepDecFusion摘要：图像分解是图像处理领域的一个重要课题。它可以从源图像中提取显着特征。我们提出了一种新的基于卷积神经网络的图像分解方法。这种方法可以应用于许多图像处理任务。在本文中，我们将图像分解网络应用于图像融合任务。我们输入红外图像和可见光图像，分别分解为三个高频特征图像和一个低频特征图像。使用特定的融合策略对两组特征图像进行融合，得到融合特征图像。最后对特征图像进行重构，得到融">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/water.jpg">
+<meta property="article:published_time" content="2022-03-25T06:59:36.000Z">
+<meta property="article:modified_time" content="2022-03-25T11:31:36.562Z">
+<meta property="article:author" content="WJQ">
+<meta property="article:tag" content="图像处理">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/water.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://dl4wjq.github.io/2022/03/25/DeepDecFusion/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'DeepDecFusion',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-03-25 19:31:36'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 链接</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/water.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hello World</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 链接</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">DeepDecFusion</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-03-25T06:59:36.000Z" title="发表于 2022-03-25 14:59:36">2022-03-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-03-25T11:31:36.562Z" title="更新于 2022-03-25 19:31:36">2022-03-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="DeepDecFusion"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="DeepDecFusion"><a href="#DeepDecFusion" class="headerlink" title="DeepDecFusion"></a>DeepDecFusion</h1><h2 id="摘要："><a href="#摘要：" class="headerlink" title="摘要："></a>摘要：</h2><p>图像分解是图像处理领域的一个重要课题。它可以从源图像中提取显着特征。我们提出了一种新的基于<strong>卷积神经网络</strong>的图像分解方法。这种方法可以应用于许多图像处理任务。在本文中，我们将图像分解网络应用于<strong>图像融合任务</strong>。我们输入红外图像和可见光图像，分别分解为三个高频特征图像和一个低频特征图像。使用特定的融合策略对两组特征图像进行融合，得到融合特征图像。最后对特征图像进行重构，得到融合图像。与最先进的融合方法相比，该方法在主观和客观评价方面都取得了更好的表现。</p>
+<p>索引词——图像融合、图像分解、深度学习、红外图像、可见图像。</p>
+<h2 id="INTRODUCTION"><a href="#INTRODUCTION" class="headerlink" title="INTRODUCTION"></a>INTRODUCTION</h2><p>融合是图像处理中的一项重要任务。它旨在从多模态信号源的图像中提取重要特征，并使用一定的融合策略生成包含多张图片互补信息的融合图像。我们的工作是常见的图像融合任务之一，即融合可见光图像和红外图像。融合后的图像不仅包含被遮挡物体的辐射信息，还保留了足够的纹理细节信息。目前，许多先进的方法广泛应用于生产和生活，如安防监控、自动驾驶、目标跟踪、目标识别等领域</p>
+<p>有很多优秀的融合方法，可以分为两类：传统方法和基于深度学习的方法。传统方法大多是基于信号处理的方法，获取图像的高频段和低频段，然后将它们合并。随着深度学习的发展，基于深度神经网络的方法在图像融合方面也显示出了巨大的潜力，因为神经网络可以提取源图像的特征并进行特征融合。</p>
+<p>传统方法可以大致分为两类：一类是基于多尺度分解的，另一类是基于表示学习的方法。在多尺度域中，将图像分解为多尺度表示特征图，然后通过特定的融合策略融合多尺度特征表示。最后通过相应的逆变换得到融合图像。在表示学习领域有很多具有代表性的多尺度分解方法，如离散小波变换等</p>
+<p>在表示学习领域。大多数方法是基于<strong>稀疏表示</strong>的，例如稀疏表示（SR）和梯度直方图（HOG）、联合稀疏表示（JSR）、具有多选策略的近似稀疏表示等.</p>
+<p>在低秩领域，李和吴等人。提出了一种基于低秩表示（LRR）的融合方法。最新的方法，如 MDLatLRR 是基于潜在 LRR 的图像分解。该方法可以提取低秩域中的源图像特征。</p>
+<p>虽然基于多尺度分解和表示学习的方法取得了良好的性能。但是这些方法仍然存在一些问题。这些方法非常复杂，字典学习是一项耗时的操作，尤其是在线培训。如果源图像很复杂，这些方法将无法很好地提取特征。为了解决这个问题，近年来，由于神经网络强大的特征提取能力，许多基于深度学习的方法被提出</p>
+<p>为了解决这个问题，近年来，由于神经网络强大的特征提取能力，许多基于深度学习的方法被提出</p>
+<p>2017年，刘等人。提出了一种基于卷积神经网络的多焦点图像融合方法。在 ICCV2017 中，Prabhakar 等人。提出了 DeepFuse  来解决多曝光图像融合的问题。 2018年，李和吴等人。提出了一种新的基于密集块和自动编码器结构的红外和可见光图像融合方法。在接下来的两年里，随着深度学习的飞速发展，涌现出一大批优秀的方法。包括Zhang等人提出的IFCNN，Ma等人提出的基于GANs的融合网络（FusionGan），以及Li等人提出的多尺度融合网络框架（NestFuse） 2020年，大部分基于神经网络的方法都是利用神经网络强大的特征提取功能，然后在特征层面进行融合，通过一些特定的融合策略得到最终的融合图像</p>
+<p>但是，基于深度网络的方法也存在一些不足： </p>
+<ol>
+<li>神经网络作为一种特征提取工具，不能解释提取特征的含义。 </li>
+<li>网络复杂，耗时长。 </li>
+<li>红外和可见光数据集的数量和规模较小，很多方法使用其他数据集进行训练。这不一定适用于提取红外和可见光图像。</li>
+</ol>
+<p>解决这些问题，我们提出了一个新颖的网络用于分解图像，借鉴传统方法和基于深度学习的方法，我们提出的网络可以将红外和可见光图像分解为高频特征图像和低频特征图像，以达到比传统方法更好的分解效果。同时，我们设计了一些融合规则来融合高低频特征图像，得到融合后的特征图像。最后，将这些融合特征图像重建为融合图像。我们提出的方法不仅利用了神经网络强大的特征提取能力，而且实现了图像的分解。与最先进的方法相比，我们的融合框架在主观和客观评价方面都取得了更好的表现</p>
+<p>此篇文章的结构如下。</p>
+<ul>
+<li>第二节中，我们介绍了一些相关的工作。</li>
+<li>第三节中，我们将详细介绍我们提出的融合方法。</li>
+<li>第四节中，我们说明了实验设置，并分析和比较了我们的实验结果。</li>
+<li>第五节，我们得出了本文的结论</li>
+</ul>
+<h2 id="RELATED-WORKS"><a href="#RELATED-WORKS" class="headerlink" title="RELATED WORKS"></a>RELATED WORKS</h2><p>无论是基于传统的图像信号处理方法还是基于深度学习的方法。它们都是非常合理和优秀的方法。我们将在本节介绍一些启发我们的相关作品</p>
+<h3 id="A-小波分解和拉普拉斯滤波器"><a href="#A-小波分解和拉普拉斯滤波器" class="headerlink" title="A 小波分解和拉普拉斯滤波器"></a>A 小波分解和拉普拉斯滤波器</h3><p>小波变换已成功应用于许多图像处理任务。图像融合最常见的小波变换技术是离散小波变换 (DWT)</p>
+<p>DWT 是一种信号处理工具，可以将信号分解为高频信息和低频信息。一般来说，低频信息包含信号的主要特征，高频信息包含信号的详细信息。在图像处理领域，通常使用二维 DWT 对图像进行分解。</p>
+<h3 id="B-基于分解的融合方法"><a href="#B-基于分解的融合方法" class="headerlink" title="B 基于分解的融合方法"></a>B 基于分解的融合方法</h3><p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/DeepDecFusion/基于分解的融合方法.jpg" alt=""></p>
+<p>作者使用这种方法将图像分解为细节图像$I_d$和基础图像$I_b$。从图.3可以看出，$I_d$是高频图像，$I_b$是低频图像</p>
+<p>如图 3 所示，低频图像$I<em>b$被连续分解得到几个高频图像$I</em>{d1}$、$I<em>{d2}$ 和 $I</em>{d3}$。最后，该方法对红外图像和可见光图像进行分解，得到高频图像和低频图像。然后进行一定的融合得到融合图像$I_f$</p>
+<h3 id="C-Deep-Learning-based-Fusion-Methods"><a href="#C-Deep-Learning-based-Fusion-Methods" class="headerlink" title="C Deep Learning-based Fusion Methods"></a>C Deep Learning-based Fusion Methods</h3><p>2017年，刘等人。提出了一种基于神经网络的方法。作者将图片分成许多小块。然后用CNN来预测每个小块是模糊还是清晰。网络构建一个决策激活图来指示原始图像的哪些像素是清晰和聚焦的。一个训练有素的网络可以很好地完成多焦点融合任务。但由于网络设计的限制，该方法仅适用于多焦点图像融合</p>
+<p>为了使网络能够融合可见光图像和红外图像，Li 和 Wu 等人。提出了一种基于自动编码器的深度神经网络（DenseFuse）。首先他们训练了一个足够强大的编码器和解码器，可以充分提取原始图像的特征并在不丢失信息的情况下重建图像，然后将红外图像和可见光图像输入编码器，得到编码特征，将两组特征融合，得到融合特征。最后将融合特征输入解码器，得到融合图像。这些方法使用编码器将图像分解为几个潜在特征。然后将这些特征融合重建得到融合图像</p>
+<p>在过去的几年里，生成对抗网络（GANs）也被应用于许多领域，包括图像融合。FusionGan 首先使用 GAN 生成融合图像。发生器输入红外和可见光图像并输出融合图像。为了提高生成图像的质量，作者设计了合适的损失函数。最后，生成器可用于融合任何红外图像和可见光图像</p>
+<h2 id="PROPOSED-FUSION-METHOD"><a href="#PROPOSED-FUSION-METHOD" class="headerlink" title="PROPOSED FUSION METHOD"></a>PROPOSED FUSION METHOD</h2><p>在本节中，将详细介绍所提出的基于多尺度分解的融合网络。</p>
+<ul>
+<li>III-A：描述了训练阶段的细节</li>
+<li>III-B：给出了网络损失函数的设计</li>
+<li>III-C：融合框架介绍</li>
+<li>III-D：在部分介绍了不同的融合策略</li>
+</ul>
+<h3 id="A-Network-Structure-网络架构"><a href="#A-Network-Structure-网络架构" class="headerlink" title="A. Network Structure - 网络架构"></a>A. Network Structure - 网络架构</h3><p>在训练阶段，我们丢弃融合策略，训练分解网络<strong>decomposition network</strong></p>
+<p>我们的训练目标是让分解网络更好地将源图像分解成几张<strong>高频</strong>和一张<strong>低频</strong>的图像，用于后续的操作。网络结构如图4所示，详细网络设置见表</p>
+<p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/DeepDecFusion/network.jpg" alt=""></p>
+<ul>
+<li>$I_{ori}$：原始输入图像</li>
+<li>$I_{re}$：重建图像</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/DeepDecFusion/table1.jpg" alt=""></p>
+<p>网络的主干<strong>backbone</strong>是四个特征提取卷积块(Cin,C1,C2,C3)</p>
+<p>下面是低频特征提取部分，即图中的‘语义’块<strong>semantic</strong>。图 6 所示的“语义”块包括两个步长为 2 的下采样卷积层 (S0,S1) 和一个可以生成低分辨率语义图像 $I<em>s$ 的公共卷积层 (S3)。然后将$I_s$上采样到与$I</em>{ori}$相同大小得到低频图像$I_{ups}$</p>
+<p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/DeepDecFusion/sem_block.jpg" alt=""></p>
+<p>我们复制不同深度的特征（C1、C2、C3），然后用卷积层（R1、R2、R3）重新洗牌它们的通道。之后，我们将它们输入到共享权重的“细节”分支中，得到三个高频图像 $I<em>{g1}$、$I</em>{g2}$ 和 $I_{g3}$。这里的detail branch详细如图5和表一所示，包括三个卷积（D0，D1，D2），通道数减少为1，得到高频图像。</p>
+<p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/DeepDecFusion/detail_block.jpg" alt=""></p>
+<p>此处添加reshuffle layers(R1,R2,R3)的原因是detail block是权重共享的，它们提取的高频信息的特征图应该遵循相同的通道分布。所以我们添加一个不共享权重的 1×1 卷积层，并对特征的通道进行重新洗牌和排序，使特征能够适应权重共享的细节块</p>
+<p>最后将三张高频图像（$I<em>{g1}$、$I</em>{g2}$、$I<em>{g3}$）和一张低频图像（$I</em>{ups}$）逐像素相加，得到最终的重建图像$I_{re}$</p>
+<p>这里我们观察到最终的重建图像是通过将高频图像和低频图像相加得到的。因此，高频图像和低频图像在数据分布空间中应该是互补的关系。当网络学习生成图像时，高频图像应该是低频图像的残差数据。所以我们设计了残差分支<strong>C -res块</strong>。我们将cin的结果skip-connect连接到语义块的前面，将其添加到c3的结果中，并将其输入到以下层。这样，C1、C2、C3得到的是源图像和语义图像之间的残差数据，既强制又自然。为了使跳跃连接的数据更紧密地匹配 C3 的深层特征，我们在C -res块中执行了三个卷积以增加跳跃连接特征的语义。</p>
+<p>如表 I 中的激活函数所示，我们考虑了低频图像和高频图像的一些属性，我们选择 LeakyRelu作为激活函数，主干网络和高频部分（Cin，C1，C2，C3，detail）的卷积函数，Relu fuction作为残差分支卷积层的激活函数（C -res）和语义块（S0，S1，S2）。因为 Relu 的输出具有一定的稀疏性，这让我们的低频特征能够过滤掉更多无用的信息，保留更多模糊但有语义的信息。最后，为了将获得的图像的像素值约束在可控范围内，我们在最后一层细节和语义块之后使用了 Tanh 激活函数。</p>
+<p>一般来说，我们首先执行一个卷积块（cin）来获得一组包含各种特征的特征图。然后经过三个相同的卷积操作(c1,c2,c3)，得到三组浅层特征。然后经过两次下采样（语义），得到深度特征。我们认为，浅层特征包含更多的低级信息，例如纹理和详细特征。我们对通道进行重新洗牌，并将这三组浅层特征输入高频分支（细节），以获得三张高频图像。更重要的是，我们认为深度特征具有更多的语义信息和全局信息，因此我们对深度特征进行卷积和上采样以获得我们的低频图像。同时，我们使用残差分支（C-res）明确地建立高频特征和低频特征之间的残差关系。最后，我们将这些特征图像逐像素相加，得到重建图像</p>
+<h3 id="B-Loss-Fuction-损失函数"><a href="#B-Loss-Fuction-损失函数" class="headerlink" title="B. Loss Fuction - 损失函数"></a>B. Loss Fuction - 损失函数</h3><p>在训练阶段，我们网络的损失函数$Loss<em>{total}$由三部分组成。这些损失是高频图像的梯度损失$L</em>{detail}$、低频图像的分布损失$L<em>{semantic}$和重建图像的内容重建损失$L</em>{reconstruction}$。损失函数的公式定义如下：</p>
+<script type="math/tex; mode=display">
+Loss_{total} = L_{detail} + \alpha L_{semantic} + \beta L_{reconstruction}</script><p>$\alpha$和$\beta$是平衡三个损失的超参数</p>
+<p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/DeepDecFusion/loss.jpg" alt=""></p>
+<h4 id="L-detail"><a href="#L-detail" class="headerlink" title="$L_{detail}$"></a>$L_{detail}$</h4><p>如图7所示，其中$L<em>{detail}$是计算高频特征图（$I</em>{g1}$，$I<em>{g2}$，$I</em>{g3}$）与原图的梯度图像之间的均方误差损失，然后我们累积这三个损失。 $L_{detail}$的详细计算公式如下：</p>
+<script type="math/tex; mode=display">
+L_{detail} = L_{grd-1} + L_{grd-2} + L_{grd-3}</script><script type="math/tex; mode=display">
+L_{grd-i} = MSE(Gradient(I_{ori}), I_{gi}), i \in \{ 1,2,3 \}</script><script type="math/tex; mode=display">
+MSE(X,Y) = \frac{1}{N} \sum^{N}_{n=1} (X_{n}, Y_{n})^2</script><h4 id="L-semantic"><a href="#L-semantic" class="headerlink" title="$L_{semantic}$"></a>$L_{semantic}$</h4><p>$L_{semantic}$是一种数据分布损失。我们计算高频图像的强监督损失，下面计算重建图像的强监督损失。我们希望低频语义块学会提取深层语义信息，而不是给它一个答案让它记住答案。同时，我们无法将合适的低频图像提供给网络以供参考。低频信息绝对不是简单的下采样图像。但是如果网络没有任何损失函数，就很难得到我们真正想要的低频图像。因此，我们将<strong>下采样的图像作为低频图像的近似数据分布</strong>，使我们的网络生成的低频结果可以在“低频域”空间中。</p>
+<script type="math/tex; mode=display">
+L_{semantic} = L_{adv}(I_s, I_{down})</script><ul>
+<li>$I_s$是网络生成的低频语义图像</li>
+<li>$I_{down}$是对源图像进行两次下采样得到的低频模糊图像</li>
+<li>$L_{adv}$是对抗性损失</li>
+</ul>
+<script type="math/tex; mode=display">
+L_{adv}(I_s, I_{down}) = L_{G} = 
+\frac{1}{N} \sum^{N}_{n=1}( D(G(I_{s}^{n})) - 1 )^{2}</script><script type="math/tex; mode=display">
+L_{D} = \frac{1}{N} \sum^{N}_{n=1}( D(I_{down}^{n}) - 1 )^{2} + 
+\frac{1}{N} \sum^{N}_{n=1}( D(I_{s}^{n}) - 0 )^{2}</script><p>N 表示图像的数量。我们这里使用的损失函数是在 LSGAN 中定义的</p>
+<h4 id="L-reconstruction"><a href="#L-reconstruction" class="headerlink" title="$L_{reconstruction}$"></a>$L_{reconstruction}$</h4><p>$L<em>{reconstruction}$是重建图像的图像内容重建损失。由两部分组成，一是像素级重建损失$L</em>{pix}$，二是结构相似性损失$L_{ssim}$：</p>
+<script type="math/tex; mode=display">
+L_{reconstruction} = L_{pix} + \gamma L_{ssim}</script><script type="math/tex; mode=display">
+L_{pix} = MSE(I_{ori}, I_{re})</script><script type="math/tex; mode=display">
+L_{ssim} = 1 - SSIM(I_{ori}, I_{re})</script><script type="math/tex; mode=display">
+SSIM(X, Y) = \frac{ (2\mu_x \mu_y)(2\sigma_{xy} + c_2) }
+{ (\mu_{x}^{2} + \mu_{y}^{2} + c_1) ( \sigma_{x}^2 + \sigma_{y}^2 + c_2 ) }</script><h3 id="C-Image-Fusion-图像融合"><a href="#C-Image-Fusion-图像融合" class="headerlink" title="C. Image Fusion - 图像融合"></a>C. Image Fusion - 图像融合</h3><p>在测试阶段，我们的融合结构分为分解和融合两部分，如图9所示。分解网络可以将图像分解为三张高频图像和一张低频图像。融合策略（图 9 中的“FS”）可以融合相应的特征图像并对其进行重构以获得最终图像</p>
+<p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/DeepDecFusion/fusion.jpg" alt=""></p>
+<p>在图 9 中，$I<em>{ir}$ 和 $I</em>{vi}$ 分别代表红外图像和可见光图像。将两幅图像送入分解网络，得到两组特征图像。一组特征图像来自可见光图像，包括三个可见光高频图像（$I<em>{vi-g1}$，$I</em>{vi-g2}$，$I<em>{vi-g3}$）和一个可见光低频图像（$I</em>{vi-ups}$）。另一组特征图像来自红外图像，包括三个红外高频图像（$I<em>{ir-g1}$、$I</em>{ir-g2}$、$I<em>{ir-g3}$）和一个红外低频图像（$I</em>{ir-ups}$）。对于对应的四组特征图像，我们的融合策略包含多种融合方法，得到最终的融合图像$I_f$</p>
+<h3 id="D-Fusion-strategy-融合策略"><a href="#D-Fusion-strategy-融合策略" class="headerlink" title="D. Fusion strategy -融合策略"></a>D. Fusion strategy -融合策略</h3><p>我们设计了一种融合策略来获得融合图像。如图8所示，我们首先使用分解网络对可见光图像$I<em>{vi}$和红外图像$I</em>{ir}$进行分解，得到两组高低频特征图像。将对应的高频和低频特征图像（如$I<em>{vi-g1}$和$I</em>{ir-g1}$）采用不同的特定融合策略进行融合，得到融合后的高频特征图像和低频特征图像（$I<em>{f-g1}$、$I</em>{f- g2}$，$I<em>{f- g3}$，$I</em>{f- ups}$）。最后，将融合特征图像逐像素相加，得到融合图像 $I_{f}$ </p>
+<p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/DeepDecFusion/f8.jpg" alt=""></p>
+<p>对于高频图像融合有两种融合策略，即逐像素相加<strong>addition</strong>和对应像素取最大值<strong>max</strong>。</p>
+<script type="math/tex; mode=display">
+(Max): I^{n}_{f-gi} = max(I^{n}_{vi_gi}, I^{n}_{ir-gi})</script><script type="math/tex; mode=display">
+(Add): I^{n}_{f-gi} = I^{n}_{vi-gi} + I^{n}_{ir-gi}
+, i \in \{ 1,2,3 \}</script><p>对于低频图像也有两种融合方法，即逐像素相加<strong>addition</strong>和平均<strong>avg</strong></p>
+<script type="math/tex; mode=display">
+(Avg): I^{n}_{f-ups} =   \frac{I^{n}_{vi-ups}+I^{n}_{ir-ups}}{2}</script><script type="math/tex; mode=display">
+(Max): I^{n}_{f-ups} = max(I^{n}_{vi-ups}, I^{n}_{ir-ups}), n \in N</script><h2 id="EXPERIMENTS-AND-ANALYSIS"><a href="#EXPERIMENTS-AND-ANALYSIS" class="headerlink" title="EXPERIMENTS AND ANALYSIS"></a>EXPERIMENTS AND ANALYSIS</h2><h3 id="训练和测试细节"><a href="#训练和测试细节" class="headerlink" title="训练和测试细节"></a>训练和测试细节</h3><p>对于超参数的选择，我们使损失值尽可能接近相同的数量级。因此，我们通过交叉验证设置 λ1 = 0.1，λ2 = 100，λ3 = 10。我们的目标是训练一个强大的分解网络，可以很好地将图像分解为高频和低频图像。这样，我们在训练阶段的输入图像就不再局限于红外图像和可见光图像。我们也可以使用 MS-COCO 和 Imagenet 或其他图像来实现这一目标。在我们的实验中，我们使用 MSCOCO 作为训练集来训练我们的分解网络。我们选择大约 80,000 张图像作为输入图像。这些图像被转换为灰度图像，然后调整为 256×256</p>
+<p>我们从 TNO 中选择了 12 对红外和可见光图像作为我们的测试图像，TNO 数据集不作为训练数据是因为 TNO 数据集图片少，只适合测试。同时，我们从 RoadScene 数据集中选取 50 对红外和可见光图像进行测试</p>
+<p>批量大小设置为64。选择<strong>Adam</strong>迭代器和自适应学习率衰减方法作为学习率调度器。我们将初始学习率设置为 $10^{-3}$，衰减因子设置为$0.5$，学习率衰减设为每为 5 次迭代，最小学习率阈值设置为$10^{-8}$。最大$epoch$数设置为1000</p>
+<p>在测试阶段，由于我们的网络是一个全卷积网络，我们输入红外图像和可见光图像，无需预处理操作。实验在两块 NVIDIA TITAN Xp GPU 和 128GB 的CPU 内存上进行。我们将 1000 张分辨率为 256×256 的图像一一分解，计算平均计算时间。分解每张图像大约需要 2ms</p>
+<h3 id="与SOTA方法的对比"><a href="#与SOTA方法的对比" class="headerlink" title="与SOTA方法的对比"></a>与SOTA方法的对比</h3><p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/DeepDecFusion/table2.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/DeepDecFusion/table3.jpg" alt=""></p>
+<h2 id="CONCLUSIONS"><a href="#CONCLUSIONS" class="headerlink" title="CONCLUSIONS"></a>CONCLUSIONS</h2><p>在本文中，我们提出了一种用于<strong>图像分解</strong>的新型多网络。我们还开发了一个分解网络融合框架来融合红外图像和可见光图像。首先，借助分解网络，将红外图像和可见光图像分别分解为多个高频特征图像和一个低频特征图像。其次，将相应的特征图像与特定的融合策略进行融合以获得融合特征图像。最后，将融合特征图像逐像素相加，得到融合图像。这种图像分解网络具有通用性，可以通过神经网络快速有效地分解任意数量的图像。同时，利用 GPUS 的强大功能，神经网络可以轻松使用 GPU 进行矩阵计算加速。图像分解的速度也可以很快。我们对所提出的方法进行了主观和客观的评估，实验结果表明它已经达到了最先进的水平。虽然网络结构简单，但证明了神经网络对图像进行分解的可行性。</p>
+<p>我们有一个猜想，CNN利用图像的语义在保留边缘的同时过滤了噪声，得到了非常好的高频信息图像。我们将继续研究基于深度学习的图像分解，包括简化一些原本复杂的图像分解计算如小波变换、低秩分解等，或者为其他图像处理应用设计更合理的网络结构。我们认为我们提出的网络可以用于不同的图像处理任务，包括多焦点融合、医学图像融合、多曝光融合，以及一些基本的计算机视觉任务，如检测、识别和分类。然后，我们将在其他图像任务中试验和测试这种方法。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">WJQ</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://dl4wjq.github.io/2022/03/25/DeepDecFusion/">https://dl4wjq.github.io/2022/03/25/DeepDecFusion/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://dl4wjq.github.io" target="_blank">Hello World</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a><a class="post-meta__tags" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><a class="post-meta__tags" href="/tags/python/">python</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/water.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/03/18/DenseFuse/"><img class="next-cover" src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/91167833_p0.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">DenseFuse：红外和可见光图像的融合方法</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/03/11/DeepFuse/" title="DeepFuse具有极端曝光图像对的曝光融合深度无监督方法"><img class="cover" src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/94603962_p0.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-11</div><div class="title">DeepFuse具有极端曝光图像对的曝光融合深度无监督方法</div></div></a></div><div><a href="/2022/03/18/DenseFuse/" title="DenseFuse：红外和可见光图像的融合方法"><img class="cover" src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/91167833_p0.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-18</div><div class="title">DenseFuse：红外和可见光图像的融合方法</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">WJQ</div><div class="author-info__description">Record my learning</div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/dl4wjq" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/dl2wjq@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#DeepDecFusion"><span class="toc-number">1.</span> <span class="toc-text">DeepDecFusion</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%91%98%E8%A6%81%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">摘要：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#INTRODUCTION"><span class="toc-number">1.2.</span> <span class="toc-text">INTRODUCTION</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RELATED-WORKS"><span class="toc-number">1.3.</span> <span class="toc-text">RELATED WORKS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-%E5%B0%8F%E6%B3%A2%E5%88%86%E8%A7%A3%E5%92%8C%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E6%BB%A4%E6%B3%A2%E5%99%A8"><span class="toc-number">1.3.1.</span> <span class="toc-text">A 小波分解和拉普拉斯滤波器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-%E5%9F%BA%E4%BA%8E%E5%88%86%E8%A7%A3%E7%9A%84%E8%9E%8D%E5%90%88%E6%96%B9%E6%B3%95"><span class="toc-number">1.3.2.</span> <span class="toc-text">B 基于分解的融合方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C-Deep-Learning-based-Fusion-Methods"><span class="toc-number">1.3.3.</span> <span class="toc-text">C Deep Learning-based Fusion Methods</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PROPOSED-FUSION-METHOD"><span class="toc-number">1.4.</span> <span class="toc-text">PROPOSED FUSION METHOD</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-Network-Structure-%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="toc-number">1.4.1.</span> <span class="toc-text">A. Network Structure - 网络架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-Loss-Fuction-%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="toc-number">1.4.2.</span> <span class="toc-text">B. Loss Fuction - 损失函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#L-detail"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">$L_{detail}$</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#L-semantic"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">$L_{semantic}$</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#L-reconstruction"><span class="toc-number">1.4.2.3.</span> <span class="toc-text">$L_{reconstruction}$</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C-Image-Fusion-%E5%9B%BE%E5%83%8F%E8%9E%8D%E5%90%88"><span class="toc-number">1.4.3.</span> <span class="toc-text">C. Image Fusion - 图像融合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#D-Fusion-strategy-%E8%9E%8D%E5%90%88%E7%AD%96%E7%95%A5"><span class="toc-number">1.4.4.</span> <span class="toc-text">D. Fusion strategy -融合策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EXPERIMENTS-AND-ANALYSIS"><span class="toc-number">1.5.</span> <span class="toc-text">EXPERIMENTS AND ANALYSIS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E5%92%8C%E6%B5%8B%E8%AF%95%E7%BB%86%E8%8A%82"><span class="toc-number">1.5.1.</span> <span class="toc-text">训练和测试细节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8ESOTA%E6%96%B9%E6%B3%95%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">1.5.2.</span> <span class="toc-text">与SOTA方法的对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CONCLUSIONS"><span class="toc-number">1.6.</span> <span class="toc-text">CONCLUSIONS</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/03/25/DeepDecFusion/" title="DeepDecFusion"><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/water.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DeepDecFusion"/></a><div class="content"><a class="title" href="/2022/03/25/DeepDecFusion/" title="DeepDecFusion">DeepDecFusion</a><time datetime="2022-03-25T06:59:36.000Z" title="发表于 2022-03-25 14:59:36">2022-03-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/18/DenseFuse/" title="DenseFuse：红外和可见光图像的融合方法"><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/91167833_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DenseFuse：红外和可见光图像的融合方法"/></a><div class="content"><a class="title" href="/2022/03/18/DenseFuse/" title="DenseFuse：红外和可见光图像的融合方法">DenseFuse：红外和可见光图像的融合方法</a><time datetime="2022-03-18T06:59:36.000Z" title="发表于 2022-03-18 14:59:36">2022-03-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/13/%E5%BE%85%E5%AE%8C%E6%88%90%E5%8D%9A%E5%AE%A2/" title="待完成博客"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="待完成博客"/></a><div class="content"><a class="title" href="/2022/03/13/%E5%BE%85%E5%AE%8C%E6%88%90%E5%8D%9A%E5%AE%A2/" title="待完成博客">待完成博客</a><time datetime="2022-03-13T12:11:36.000Z" title="发表于 2022-03-13 20:11:36">2022-03-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/11/DeepFuse/" title="DeepFuse具有极端曝光图像对的曝光融合深度无监督方法"><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/94603962_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DeepFuse具有极端曝光图像对的曝光融合深度无监督方法"/></a><div class="content"><a class="title" href="/2022/03/11/DeepFuse/" title="DeepFuse具有极端曝光图像对的曝光融合深度无监督方法">DeepFuse具有极端曝光图像对的曝光融合深度无监督方法</a><time datetime="2022-03-11T06:59:36.000Z" title="发表于 2022-03-11 14:59:36">2022-03-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/05/Kitti%E6%95%B0%E6%8D%AE%E9%9B%86Object%20Detection%E6%80%BB%E7%BB%93/" title="Kitti数据集Object Detection总结"><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/89142475_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Kitti数据集Object Detection总结"/></a><div class="content"><a class="title" href="/2022/03/05/Kitti%E6%95%B0%E6%8D%AE%E9%9B%86Object%20Detection%E6%80%BB%E7%BB%93/" title="Kitti数据集Object Detection总结">Kitti数据集Object Detection总结</a><time datetime="2022-03-05T05:37:36.000Z" title="发表于 2022-03-05 13:37:36">2022-03-05</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By WJQ</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
