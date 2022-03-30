@@ -1,0 +1,267 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>DenseFuse：VoxelNet：基于点云的 3D 对象检测的端到端学习 | Hello ╮(￣▽￣)╭ World</title><meta name="keywords" content="深度学习,点云,目标检测"><meta name="author" content="WJQ"><meta name="copyright" content="WJQ"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="VoxelNet：基于点云的 3D 对象检测的端到端学习Introduction最近，Qi 等人提出了PointNet，一个端到端的深度神经网络，直接从点云中学习逐点特征。这种方法在 3D 对象识别、3D 对象部分分割和逐点语义分割任务上展示了令人印象深刻的结果。在Pointnet++中，引入了 PointNet 的改进版本，使网络能够学习不同尺度的局部结构。为了获得令人满意的结果，这两种方法在所">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DenseFuse：VoxelNet：基于点云的 3D 对象检测的端到端学习">
+<meta property="og:url" content="https://dl4wjq.github.io/2022/03/28/VoxelNet/index.html">
+<meta property="og:site_name" content="Hello ╮(￣▽￣)╭ World">
+<meta property="og:description" content="VoxelNet：基于点云的 3D 对象检测的端到端学习Introduction最近，Qi 等人提出了PointNet，一个端到端的深度神经网络，直接从点云中学习逐点特征。这种方法在 3D 对象识别、3D 对象部分分割和逐点语义分割任务上展示了令人印象深刻的结果。在Pointnet++中，引入了 PointNet 的改进版本，使网络能够学习不同尺度的局部结构。为了获得令人满意的结果，这两种方法在所">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/96145490_p0.jpg">
+<meta property="article:published_time" content="2022-03-28T06:59:36.000Z">
+<meta property="article:modified_time" content="2022-03-30T12:41:12.624Z">
+<meta property="article:author" content="WJQ">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="点云">
+<meta property="article:tag" content="目标检测">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/96145490_p0.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://dl4wjq.github.io/2022/03/28/VoxelNet/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'DenseFuse：VoxelNet：基于点云的 3D 对象检测的端到端学习',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-03-30 20:41:12'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 链接</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/96145490_p0.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hello ╮(￣▽￣)╭ World</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 链接</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">DenseFuse：VoxelNet：基于点云的 3D 对象检测的端到端学习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-03-28T06:59:36.000Z" title="发表于 2022-03-28 14:59:36">2022-03-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-03-30T12:41:12.624Z" title="更新于 2022-03-30 20:41:12">2022-03-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="DenseFuse：VoxelNet：基于点云的 3D 对象检测的端到端学习"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="VoxelNet：基于点云的-3D-对象检测的端到端学习"><a href="#VoxelNet：基于点云的-3D-对象检测的端到端学习" class="headerlink" title="VoxelNet：基于点云的 3D 对象检测的端到端学习"></a>VoxelNet：基于点云的 3D 对象检测的端到端学习</h1><h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>最近，Qi 等人提出了PointNet，一个端到端的深度神经网络，直接从点云中学习逐点特征。这种方法在 3D 对象识别、3D 对象部分分割和逐点语义分割任务上展示了令人印象深刻的结果。在Pointnet++中，引入了 PointNet 的改进版本，使网络能够学习不同尺度的局部结构。为了获得令人满意的结果，这两种方法在所有输入点（~1k 点）上训练了特征变换器网络。导致高计算和内存要求。将 3D 特征学习网络扩展到更多数量级的点和 3D 检测任务是我们在本文中解决的主要挑战</p>
+<p>Region proposal network（RPN）是一种高度优化的算法，用于有效的目标检测 。然而，这种方法要求数据密集并以张量结构（例如图像、视频）进行组织，而典型的 LiDAR 点云并非如此。在本文中，我们缩小了点集特征学习和 RPN 之间的差距，用于 3D 检测任务</p>
+<p>我们提出了 VoxelNet，一个通用的 3D 检测框架，它同时从点云中学习判别特征表示并以端到端的方式预测准确的 3D 边界框，如图 2 所示。我们设计了一种新颖的体素特征编码(VFE) 层，通过将逐点特征与局部聚合特征相结合，实现体素内的点间交互。堆叠多个 VFE 层允许学习用于表征局部 3D 形状信息的复杂特征。具体来说，VoxelNet 将点云划分为等间距的 3D 体素，通过堆叠的 VFE 层对每个体素进行编码，然后 3D 卷积进一步聚合局部体素特征，将点云转换为高维体积表示。最后，RPN 使用体积表示并产生检测结果。这种高效的算法受益于稀疏点结构和体素网格上的高效并行处理。</p>
+<blockquote>
+<p>图 2. VoxelNet 架构。特征学习网络将原始点云作为输入，将空间划分为体素，并将每个体素内的点转换为表征形状信息的向量表示。该空间表示为稀疏的 4D 张量。卷积中间层处理 4D 张量以聚合空间上下文。最后，RPN 生成 3D 检测</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/voxelnet/结构.jpg" alt=""></p>
+<h2 id="贡献"><a href="#贡献" class="headerlink" title="贡献"></a>贡献</h2><ol>
+<li>我们提出了一种新颖的<strong>端到端</strong>可训练深度架构，用于基于点云的 3D 检测，VoxelNet，它直接在稀疏 3D 点上运行，避免了手动特征工程引入的信息瓶颈</li>
+<li>我们提出了一种实现VoxelNet 的有效方法，该方法受益于稀疏点结构和体素网格上的高效并行处理。</li>
+<li>我们在 KITTI 基准上进行实验，并表明 VoxelNet 在基于 LiDAR 的汽车、行人和骑车人检测基准中产生了最先进的结果</li>
+</ol>
+<h2 id="VoxelNet-Architecture"><a href="#VoxelNet-Architecture" class="headerlink" title="VoxelNet Architecture"></a>VoxelNet Architecture</h2><p>VoxelNet 由三个功能块组成：</p>
+<ol>
+<li>特征学习网络 Feature learning network</li>
+<li>卷积中间层 Convolutional middle layers</li>
+<li>区域提议网络 Region proposal network</li>
+</ol>
+<h3 id="Feature-Learning-Network"><a href="#Feature-Learning-Network" class="headerlink" title="Feature Learning Network"></a>Feature Learning Network</h3><h4 id="体素分区-Voxel-Partition"><a href="#体素分区-Voxel-Partition" class="headerlink" title="体素分区 Voxel Partition"></a>体素分区 Voxel Partition</h4><p>给定一个点云，我们将 3D 空间细分为等间距的体素，如图 2 所示。假设点云包含 3D 空间，范围分别为 Z、Y、X 轴的 D、H、W。我们相应地定义了大小为 $v_D$、$v_H$ 和 $v_W$ 的每个体素。生成的 3D 体素网格的大小为 $D’ = \frac{D}{v_D},H’= \frac{H}{v_H} ,W’ = \frac{W}{v_W}$ 。这里，为简单起见，我们假设 D、H、W 是$v_D$、$v_H$ 和 $v_W$的倍数。</p>
+<h4 id="分组-Grouping"><a href="#分组-Grouping" class="headerlink" title="分组 Grouping"></a>分组 Grouping</h4><p>我们根据它们所在的体素对点进行分组。由于距离、遮挡、对象的相对姿势和非均匀采样等因素，点云是稀疏的，并且在整个空间中具有高度可变的点密度。因此，分组后，一个体素将包含可变数量的点。图 2 显示了一个示例，其中 Voxel-1 的点明显多于 Voxel-2 和 Voxel-4，而 Voxel-3 不包含任何点</p>
+<h4 id="随机抽样-Random-Sampling"><a href="#随机抽样-Random-Sampling" class="headerlink" title="随机抽样 Random Sampling"></a>随机抽样 Random Sampling</h4><p>通常，高清 LiDAR 点云由 10 万个点组成。直接处理所有点不仅会增加计算平台的内存/效率负担，而且整个空间中高度可变的点密度可能会使检测产生偏差。为此，从包含超过 T 个点的体素中随机抽取一个固定数量的点 T。这种抽样策略有两个目的：</p>
+<ol>
+<li>节省计算；</li>
+<li>减少体素之间的点不平衡，从而减少采样偏差，并为训练增加更多变化。</li>
+</ol>
+<h4 id="堆叠体素特征编码-Stacked-Voxel-Feature-Encoding"><a href="#堆叠体素特征编码-Stacked-Voxel-Feature-Encoding" class="headerlink" title="堆叠体素特征编码 Stacked Voxel Feature Encoding"></a>堆叠体素特征编码 Stacked Voxel Feature Encoding</h4><p>关键的创新是 VFE 层链。为简单起见，图 2 说明了一个体素的分层特征编码过程。不失一般性，我们在下一段中使用 VFE Layer-1 来描述细节。图 3 显示了 VFE 第 1 层的架构</p>
+<p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/voxelnet/VFE层.jpg" alt=""></p>
+<ol>
+<li>将 $V = {p_i = [x_i, y_i, z_i, r_i]^{T} ∈ R^4 }i=1…t$表示为包含 t ≤ T 个 LiDAR 点的非空体素，</li>
+<li>我们首先计算为 V 中所有点的质心，记为 $(v_x,v_y,v_z)$。然后我们用相对偏移来扩充每个点的维度。获得输入特征集 ：<script type="math/tex; mode=display">
+ V_{in} = \{\hat{p_i} = [x_i, y_i, z_i, r_i,         x_i - v_x, y_i - v_y, z_i - v_z]^{T} ∈R^7\}         i=1...t</script></li>
+<li><p>接下来，每个$\hat{p_i}$ 通过全连接网络 (FCN) 转换为一个特征空间，我们可以在其中聚合来自点特征$f_i ∈ R^m$ 的信息，以编码包含在体素中的表面的形状。 FCN 由<strong>线性层</strong>、<strong>批量归一化 (BN) 层</strong>和<strong>整流线性单元 (ReLU) 层</strong>组成。在获得逐点特征表示后，我们在与 V 关联的所有 $f_i$ 上使用逐元素 MaxPooling 来获得 V 的局部聚合特征</p>
+</li>
+<li><p>最后，我们逐点级联特征。因此我们得到输出特征集 </p>
+<script type="math/tex; mode=display">
+V_{out}     = \{f^{out}_i \}i...t</script></li>
+<li><p>所有非空体素都以相同的方式编码，并且它们在 FCN 中<strong>共享相同的参数</strong></p>
+</li>
+<li><p>我们使用 VFEi(cin,cout) 来表示第 i 个 VFE 层，它将维度 cin 的输入特征转换为维度cout的输出特征。线性层学习大小为 $cin \times cout/2$的矩阵，逐点连接产生维度为 <strong>cout</strong> 的输出。</p>
+</li>
+<li><p>因为输出特征结合了逐点特征和局部聚合特征，堆叠 VFE 层对体素内的点交互进行编码，并使最终特征表示能够学习描述性形状信息。通过 FCN 将 VFE-n 的输出转换并应用 element-wise Maxpool 获得体素特征</p>
+</li>
+</ol>
+<h4 id="稀疏张量表示Sparse-Tensor-Representation"><a href="#稀疏张量表示Sparse-Tensor-Representation" class="headerlink" title="稀疏张量表示Sparse Tensor Representation"></a>稀疏张量表示Sparse Tensor Representation</h4><p>通过仅处理非空体素，我们获得体素特征列表，每个体素特征唯一地关联到特定非空体素的空间坐标。获得的体素特征列表可以表示为一个稀疏的 4D 张量，大小为 C ×D’ ×H’ ×W’，如图 2 所示。虽然点云包含 ∼100k 点，但超过 90%的体素通常是空的。将非空体素特征表示为稀疏张量极大地降低了反向传播期间的内存使用和计算成本，这是我们高效实现的关键步骤</p>
+<h3 id="Convolutional-Middle-Layers"><a href="#Convolutional-Middle-Layers" class="headerlink" title="Convolutional Middle Layers"></a>Convolutional Middle Layers</h3><p>每个卷积中间层都应用3D卷积，BN层和ReLU层。</p>
+<p>卷积中间层在逐渐扩展的感受野中聚合体素特征，为形状描述添加更多上下文。卷积中间层中过滤器的详细尺寸在第 3 节中解释。</p>
+<h3 id="Region-Proposal-Network"><a href="#Region-Proposal-Network" class="headerlink" title="Region Proposal Network"></a>Region Proposal Network</h3><p><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/voxelnet/FPN.jpg" alt=""></p>
+<p>RPN 的输入是卷积中间层提供的特征图。该网络的架构如图 4 所示。该网络具有三个完全卷积层块。每个块的第一层通过步长为 2 的卷积将特征图下采样一半，然后是步长为 1 的卷积序列。</p>
+<p>在每个卷积层之后，应用 BN 和 ReLU。然后我们将每个块的输出上采样到固定大小并连接以构建高分辨率特征图。最后，将该特征图映射到所需的学习目标：</p>
+<ol>
+<li>概率分数图</li>
+<li>回归图</li>
+</ol>
+<h2 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h2><p>我们将 3D 地面实况框参数化为 </p>
+<script type="math/tex; mode=display">
+u = (x_{c}^{g},y_{c}^{g},z_{c}^{g},l^{g},w^{g},h^{g},
+\theta^{g})</script><p>对应于中心的 7 个回归目标的偏差：</p>
+<script type="math/tex; mode=display">
+\Delta x = \frac{x_{c}^{g} - x_{c}^{a}}{d_a} ,
+\Delta y = \frac{y_{c}^{g} - y_{c}^{a}}{d_a} ,
+\Delta z = \frac{z_{c}^{g} - z_{c}^{a}}{h_a}</script><script type="math/tex; mode=display">
+d^a = \sqrt{(l^a)^2 + (w^a)^2}</script><script type="math/tex; mode=display">
+\Delta l = log(\frac{l^g}{l^a}) , 
+\Delta w = log(\frac{w^g}{w^a}) ,
+\Delta h = log(\frac{h^g}{h^a})</script><script type="math/tex; mode=display">
+\Delta \theta = \theta^g - \theta^a</script><p>最终的损失函数为：</p>
+<script type="math/tex; mode=display">
+Loss = \alpha \frac{1}{N_{pos}} \sum_{i} 
+L_{cls}(p_{i}^{pos}, 1) + 
+\beta \frac{1}{N_{neg}} \sum_{j}  
+L_{cls}(p_{j}^{neg}, 1) +
+\frac{1}{N_{pos}} \sum_{i} L_{reg}(u_{i}, u_{i}^{*})</script><ul>
+<li>$L_{cls}$：二元交叉熵损失</li>
+<li>$L_{cls}$：回归损失，使用Smooth L1函数</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">WJQ</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://dl4wjq.github.io/2022/03/28/VoxelNet/">https://dl4wjq.github.io/2022/03/28/VoxelNet/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://dl4wjq.github.io" target="_blank">Hello ╮(￣▽￣)╭ World</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><a class="post-meta__tags" href="/tags/%E7%82%B9%E4%BA%91/">点云</a><a class="post-meta__tags" href="/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">目标检测</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/96145490_p0.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/03/25/DeepDecFusion/"><img class="next-cover" src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/water.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">DeepDecFusion</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/03/25/DeepDecFusion/" title="DeepDecFusion"><img class="cover" src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/water.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-25</div><div class="title">DeepDecFusion</div></div></a></div><div><a href="/2022/03/11/DeepFuse/" title="DeepFuse具有极端曝光图像对的曝光融合深度无监督方法"><img class="cover" src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/94603962_p0.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-11</div><div class="title">DeepFuse具有极端曝光图像对的曝光融合深度无监督方法</div></div></a></div><div><a href="/2022/03/18/DenseFuse/" title="DenseFuse：红外和可见光图像的融合方法"><img class="cover" src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/91167833_p0.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-18</div><div class="title">DenseFuse：红外和可见光图像的融合方法</div></div></a></div><div><a href="/2022/03/05/Kitti%E6%95%B0%E6%8D%AE%E9%9B%86Object%20Detection%E6%80%BB%E7%BB%93/" title="Kitti数据集Object Detection总结"><img class="cover" src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/89142475_p0.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-05</div><div class="title">Kitti数据集Object Detection总结</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">WJQ</div><div class="author-info__description">Record my learning</div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/dl4wjq" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/dl2wjq@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#VoxelNet%EF%BC%9A%E5%9F%BA%E4%BA%8E%E7%82%B9%E4%BA%91%E7%9A%84-3D-%E5%AF%B9%E8%B1%A1%E6%A3%80%E6%B5%8B%E7%9A%84%E7%AB%AF%E5%88%B0%E7%AB%AF%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">VoxelNet：基于点云的 3D 对象检测的端到端学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-number">1.1.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B4%A1%E7%8C%AE"><span class="toc-number">1.2.</span> <span class="toc-text">贡献</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VoxelNet-Architecture"><span class="toc-number">1.3.</span> <span class="toc-text">VoxelNet Architecture</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Feature-Learning-Network"><span class="toc-number">1.3.1.</span> <span class="toc-text">Feature Learning Network</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%93%E7%B4%A0%E5%88%86%E5%8C%BA-Voxel-Partition"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">体素分区 Voxel Partition</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E7%BB%84-Grouping"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">分组 Grouping</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E6%8A%BD%E6%A0%B7-Random-Sampling"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">随机抽样 Random Sampling</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A0%86%E5%8F%A0%E4%BD%93%E7%B4%A0%E7%89%B9%E5%BE%81%E7%BC%96%E7%A0%81-Stacked-Voxel-Feature-Encoding"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">堆叠体素特征编码 Stacked Voxel Feature Encoding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A8%80%E7%96%8F%E5%BC%A0%E9%87%8F%E8%A1%A8%E7%A4%BASparse-Tensor-Representation"><span class="toc-number">1.3.1.5.</span> <span class="toc-text">稀疏张量表示Sparse Tensor Representation</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Convolutional-Middle-Layers"><span class="toc-number">1.3.2.</span> <span class="toc-text">Convolutional Middle Layers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Region-Proposal-Network"><span class="toc-number">1.3.3.</span> <span class="toc-text">Region Proposal Network</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Loss-Function"><span class="toc-number">1.4.</span> <span class="toc-text">Loss Function</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/03/28/VoxelNet/" title="DenseFuse：VoxelNet：基于点云的 3D 对象检测的端到端学习"><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/96145490_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DenseFuse：VoxelNet：基于点云的 3D 对象检测的端到端学习"/></a><div class="content"><a class="title" href="/2022/03/28/VoxelNet/" title="DenseFuse：VoxelNet：基于点云的 3D 对象检测的端到端学习">DenseFuse：VoxelNet：基于点云的 3D 对象检测的端到端学习</a><time datetime="2022-03-28T06:59:36.000Z" title="发表于 2022-03-28 14:59:36">2022-03-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/25/DeepDecFusion/" title="DeepDecFusion"><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/water.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DeepDecFusion"/></a><div class="content"><a class="title" href="/2022/03/25/DeepDecFusion/" title="DeepDecFusion">DeepDecFusion</a><time datetime="2022-03-25T06:59:36.000Z" title="发表于 2022-03-25 14:59:36">2022-03-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/18/DenseFuse/" title="DenseFuse：红外和可见光图像的融合方法"><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/91167833_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DenseFuse：红外和可见光图像的融合方法"/></a><div class="content"><a class="title" href="/2022/03/18/DenseFuse/" title="DenseFuse：红外和可见光图像的融合方法">DenseFuse：红外和可见光图像的融合方法</a><time datetime="2022-03-18T06:59:36.000Z" title="发表于 2022-03-18 14:59:36">2022-03-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/13/%E5%BE%85%E5%AE%8C%E6%88%90%E5%8D%9A%E5%AE%A2/" title="待完成博客"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="待完成博客"/></a><div class="content"><a class="title" href="/2022/03/13/%E5%BE%85%E5%AE%8C%E6%88%90%E5%8D%9A%E5%AE%A2/" title="待完成博客">待完成博客</a><time datetime="2022-03-13T12:11:36.000Z" title="发表于 2022-03-13 20:11:36">2022-03-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/11/DeepFuse/" title="DeepFuse具有极端曝光图像对的曝光融合深度无监督方法"><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/94603962_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DeepFuse具有极端曝光图像对的曝光融合深度无监督方法"/></a><div class="content"><a class="title" href="/2022/03/11/DeepFuse/" title="DeepFuse具有极端曝光图像对的曝光融合深度无监督方法">DeepFuse具有极端曝光图像对的曝光融合深度无监督方法</a><time datetime="2022-03-11T06:59:36.000Z" title="发表于 2022-03-11 14:59:36">2022-03-11</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By WJQ</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
