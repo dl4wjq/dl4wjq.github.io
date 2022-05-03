@@ -1,0 +1,414 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议 | Hello ╮(￣▽￣)╭ World</title><meta name="keywords" content="python,DeepLearning,PyTorch,Object Detection"><meta name="author" content="WJQ"><meta name="copyright" content="WJQ"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议Abstract基于激光雷达的三维物体检测对于自动驾驶来说是不可避免的，因为它直接与环境理解相联系，从而为预测和运动规划奠定了基础。实时推断高度稀疏的三维数据的能力对于自动驾驶汽车以外的许多其他应用领域来说是一个棘手的问题，例如增强现实、个人机器人或工业自动化。 我们介绍Complex-YOLO，这是一个最先进的实时3D物体检测网络，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议">
+<meta property="og:url" content="https://dl4wjq.github.io/2022/05/01/Complex-YOLO/index.html">
+<meta property="og:site_name" content="Hello ╮(￣▽￣)╭ World">
+<meta property="og:description" content="Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议Abstract基于激光雷达的三维物体检测对于自动驾驶来说是不可避免的，因为它直接与环境理解相联系，从而为预测和运动规划奠定了基础。实时推断高度稀疏的三维数据的能力对于自动驾驶汽车以外的许多其他应用领域来说是一个棘手的问题，例如增强现实、个人机器人或工业自动化。 我们介绍Complex-YOLO，这是一个最先进的实时3D物体检测网络，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/LGNWJQ/picgo/main/img/202111251937858.jpg">
+<meta property="article:published_time" content="2022-05-01T11:16:18.000Z">
+<meta property="article:modified_time" content="2022-05-03T08:17:56.345Z">
+<meta property="article:author" content="WJQ">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="DeepLearning">
+<meta property="article:tag" content="PyTorch">
+<meta property="article:tag" content="Object Detection">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/LGNWJQ/picgo/main/img/202111251937858.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://dl4wjq.github.io/2022/05/01/Complex-YOLO/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-05-03 16:17:56'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 链接</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/LGNWJQ/picgo/main/img/202111251937858.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hello ╮(￣▽￣)╭ World</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 链接</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-01T11:16:18.000Z" title="发表于 2022-05-01 19:16:18">2022-05-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-03T08:17:56.345Z" title="更新于 2022-05-03 16:17:56">2022-05-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议"><a href="#Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议" class="headerlink" title="Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议"></a>Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议</h1><h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>基于激光雷达的三维物体检测对于自动驾驶来说是不可避免的，因为它直接与环境理解相联系，从而为预测和运动规划奠定了基础。实时推断高度稀疏的三维数据的能力对于自动驾驶汽车以外的许多其他应用领域来说是一个棘手的问题，例如增强现实、个人机器人或工业自动化。</p>
+<p>我们介绍Complex-YOLO，这是一个最先进的实时3D物体检测网络，只针对点云。在这项工作中，我们描述了一个网络，它扩展了YOLOv2，一个用于RGB图像的快速2D标准物体检测器，通过一个特定的复杂回归策略来估计笛卡尔空间的多类3D框。因此，我们提出了一个具体的<strong>欧拉-区域建议网络（E-RPN）</strong>，通过在回归网络中加入一个虚数和一个实数部分来估计物体的姿势。这最终形成了一个封闭的复杂空间，避免了单一角度估计所产生的奇异现象。E-RPN在训练过程中支持良好的泛化。我们在KITTI基准套件上的实验表明，在效率方面，我们超过了目前领先的三维物体检测方法。我们在汽车、三轮车和自行车上取得了最先进的结果，比最快的竞争者快五倍以上。此外，我们的模型能够同时估计所有八个KITTI类别，包括货车、卡车或坐着的行人，而且精确度很高。</p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>由于近年来汽车激光雷达传感器的大力改进，点云处理在自动驾驶中变得越来越重要。供应商的传感器能够实时提供周围环境的三维点。其优点是可以直接测量周围物体的距离[1]。这使我们能够开发用于自主驾驶的物体检测算法，准确地估计不同物体的三维位置和方向。</p>
+<p>与图像相比，激光雷达点云是稀疏的，密度不一，分布在各处测量区域。这些点是无序的，它们在当地相互作用，主要是不能孤立地进行分析。点云处理应该总是对基本的变换不产生影响。</p>
+<p>一般来说，基于深度学习的物体检测和分类是一项众所周知的任务，并且广泛建立在图像的二维边界框回归上。研究的重点主要是准确性和效率之间的权衡。就自动驾驶而言，效率更为重要。因此，最好的物体检测器是使用区域建议网络（RPN）或类似的基于网格的RPN-方法[13]。这些网络非常高效、准确，甚至能够在专用硬件或嵌入式设备上运行。对点云的物体检测仍然很少，但越来越重要。这些应用需要能够预测三维边界盒。目前，主要存在三种使用深度学习的不同方法</p>
+<ol>
+<li>使用多层感知器的直接点云处理</li>
+<li>使用卷积神经网络 (CNN) 将点云转换为体素或图像堆栈</li>
+<li>组合融合方法</li>
+</ol>
+<h2 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h2><p>最近，基于Frustum的网络在KITTI基准套件中表现出了很高的性能。该模型在三维物体检测和基于汽车、行人和自行车的鸟瞰检测中都排名1，位居第二。这是唯一的方法，它直接使用Point-Net处理点云，而不使用激光雷达数据的CNN和体素创建。然而，它需要一个预处理，因此它也必须使用相机传感器。基于另一个处理校准过的相机图像的CNN，它使用这些检测来使全局点云最小化为基于地壳的缩小点云。这种方法有两个缺点：</p>
+<ol>
+<li>模型的准确性在很大程度上取决于摄像机图像和其相关的CNN。因此，该方法不可能只应用于激光雷达数据；</li>
+<li>整个管道必须连续运行两种深度学习方法，这导致推理时间增加，效率降低。引用的模型在NVIDIA GTX 1080i GPU上运行的帧率太低，大约为7fps。</li>
+</ol>
+<p>相反，Zhou等人提出了一个仅在激光雷达数据上运行的模型Voxelnet。关于这一点，它是KITTI上仅使用激光雷达数据进行三维和鸟瞰探测的最佳排名模型。其基本思想是在网格单元上进行端到端的学习，不使用手工制作的特征。网格单元内部的特征是在训练过程中使用点网方法学习的。在上面建立了一个CNN，预测三维边界框。尽管精度很高，但该模型在TitanX GPU上的推理时间却很短，只有4fps。</p>
+<p>Chen等人报告了另一种高排名的方法。其基本思想是利用手工制作的特征，如点密度、最大高度和代表性的点强度，将激光雷达点云投影到基于体素的RGB地图中[9]。为了达到高度精确的结果，他们使用了一种基于激光雷达鸟瞰图、基于激光雷达的前视图和基于摄像机的前视图像的多视角方法。这种融合最终导致处理时间过长，在NVIDIA GTX 1080i GPU上只能达到4fps。另一个缺点是需要二级传感器输入（摄像头）。</p>
+<h2 id="Contribution"><a href="#Contribution" class="headerlink" title="Contribution"></a>Contribution</h2><p>令我们惊讶的是，到目前为止，还没有人在自动驾驶方面实现实时效率。因此，我们推出了第一个能够在 NVIDIA TitanX GPU 上以超过 50fps 的速度运行的轻量而准确的模型。我们使用多视图理念（MV3D）[5]进行点云预处理和特征提取。然而，我们忽略了多视图的融合，只生成一个基于激光雷达的单一鸟瞰RGB图（见图1），以确保效率。</p>
+<center> 图1. Complex-YOLO 是一个非常有效的模型。</center>
+
+<p><img src="https://raw.githubusercontent.com/LGNWJQ/picgo/main/complex-yolo/f1.png" alt="f4"></p>
+<blockquote>
+<p>Complex-YOLO 是一个非常有效的模型，它直接在仅基于激光雷达的鸟瞰 RGB 地图上进行操作，以估计和定位准确的 3D 多类边界框。图的上半部分显示了基于 Velodyne HDL64 点云（Geiger 等人 [1]）的鸟瞰图，例如预测对象。下一个勾勒出将 3D 框重新投影到图像空间的轮廓。注意：Complex-YOLO 不需要相机图像作为输入，它仅基于激光雷达</p>
+</blockquote>
+<p>我们提出了Complex-YOLO，这是YOLOv2的三维版本，它是最快的最先进的图像物体检测器之一。Complex-YOLO是由我们特定的E-RPN支持的，E-RPN通过每个盒子的虚部和实部来估计物体的方向。我们的想法是要有一个没有奇异点的封闭数学空间，以实现准确的角度概括。我们的模型能够实时预测具有定位功能的准确的三维方框和物体的准确方向，即使物体是基于几个点的（如行人）。因此，我们设计了特殊的 anchor-boxe。此外，它能够通过只使用激光雷达输入数据来预测所有八个KITTI类别。我们在KITTI基准套件上评估了我们的模型。在准确性方面，我们对汽车、行人和骑自行车的人取得了相同的结果，在效率方面，我们比目前的领先者至少高出5倍。</p>
+<p>本文的主要贡献是。</p>
+<ol>
+<li>这项工作通过使用新的 E-RPN 引入 Complex-YOLO，用于 3D 框估计的可靠角度回归</li>
+<li>我们提出了在KITTI基准套件上评估的具有高精确度的实时性能，比目前领先的模型快5倍以上</li>
+<li>我们估计 E-RPN 支持的每个 3D 框的精确航向，从而能够预测周围物体的轨迹</li>
+<li>与其他基于激光雷达的方法相比，我们的模型在一个前进路径中同时有效地估计了所有的类别。</li>
+</ol>
+<h2 id="Complex-YOLO"><a href="#Complex-YOLO" class="headerlink" title="Complex-YOLO"></a>Complex-YOLO</h2><p>本节介绍了基于网格的点云预处理、特殊的网络结构、用于训练的派生损失函数和我们的高效设计，以确保实时性能。</p>
+<h3 id="2-1-点云预处理"><a href="#2-1-点云预处理" class="headerlink" title="2.1 点云预处理"></a>2.1 点云预处理</h3><center> 图4. 空间上的地面实况分布。</center>
+
+<p><img src="https://raw.githubusercontent.com/LGNWJQ/picgo/main/complex-yolo/f4.png" alt="f4"></p>
+<blockquote>
+<p>该图概述了鸟瞰区域的大小，左边是检测样本。右边显示的是[1]中注释的盒子的二维空间图。该分布图概述了用于注释的相机的水平视场和我们地图中继承的盲点</p>
+</blockquote>
+<p>由Velodyne HDL64激光扫描仪获取的单帧3D点云，被转换为单一的鸟瞰RGB图。覆盖传感器原点正前方的<strong>80米x40米</strong>的区域（见<strong>图4</strong>）。受Chen等人（MV3D）的启发，RGB鸟瞰图由<strong>高度、强度和密度</strong>进行编码。网格图的大小被定义为<strong>n=1024，m=512</strong>。因此，我们将三维点云投影并离散成一个二维网格，分辨率约为<strong>g=8cm</strong>:</p>
+<script type="math/tex; mode=display">
+g = 80m \div 1024 = 0.078125m = 7.8cm</script><p>与MV3D相比，我们略微减少了单元的大小，以达到较小的量化误差，同时也提高了输入分辨率。由于效率和性能的原因，我们只使用一个而不是多个高度图。因此，所有三个特征通道:</p>
+<script type="math/tex; mode=display">
+z_r, z_g, z_b \in \mathbb{R}^{(m \times n)}</script><p>都是针对覆盖区域$\Omega$内的整个点云$P \in \mathbb{R}^3$计算的。我们考虑$P_{\Omega}$原点内的Velodyne并定义。</p>
+<script type="math/tex; mode=display">
+P_{\Omega}= \{ P=[x,y,z]^{T} \mid 
+x \in [0,40m], \ y \in [-40m, 40m],\ z \in [-2m,1.25m]
+\}</script><p>我们选择$z \in [-2m,1.25m]$，考虑到激光雷达的$z$位置为1.73m以覆盖地面以上至约3m高度的区域，预计卡车为最高物体。在校准的帮助下，我们定义了一个映射函数</p>
+<script type="math/tex; mode=display">
+S_j = F(P_{\Omega i} ,\ g)</script><ul>
+<li>$S \in \mathbb{R}^{(m,n)}$：将每个索引为$i$的点映射到我们RGB图的一个特定网格单元$S_j$</li>
+</ul>
+<p>一个集合描述了被映射到特定网格单元的所有点：</p>
+<script type="math/tex; mode=display">
+P_{\Omega i \Rightarrow j} = \{
+P_{\Omega i} = [x,y,z]^T \mid \ 
+S_j = F(P_{\Omega i} ,\ g)
+\}</script><p>因此，我们可以计算每个像素的通道，定义Velodyne强度为$I(P_{\Omega})$:</p>
+<script type="math/tex; mode=display">
+z_g(S_j) = max(P_{\Omega i \Rightarrow j}\ \cdot \ [0,0,1]^T )</script><script type="math/tex; mode=display">
+z_b(S_j) = max(\ I(P_{\Omega i \Rightarrow j})\ )</script><script type="math/tex; mode=display">
+z_r =min(1.0,\ log(N+1)/64)\ \ N= \left | P_{\Omega i \Rightarrow j} \right |</script><ul>
+<li>$N$：描述了从$P_{\Omega i}$映射到$S_j$的点的数量</li>
+<li>$g$：是网格单元大小的参数。</li>
+<li>$z_g$：编码最大高度</li>
+<li>$z_b$：编码最大强度</li>
+<li>$z_r$：编码映射到Sj的所有点的归一化密度（见图2）。</li>
+</ul>
+<center> 图2. Complex-YOLO Pipeline</center>
+
+<p><img src="https://raw.githubusercontent.com/LGNWJQ/picgo/main/complex-yolo/f2.png" alt="f2"></p>
+<blockquote>
+<p>我们提出了一个细的管道，用于在点云上快速而准确地进行三维框的估计。RGB图被送入CNN。E-RPN网格在最后一张特征图上同时运行，并预测每个网格单元的五个框。每个框的预测由回归参数t和物体分数p组成，先验概率$p_0$和n个类分数$p_1…p_n$</p>
+</blockquote>
+<h3 id="2-2-Architecture"><a href="#2-2-Architecture" class="headerlink" title="2.2 Architecture"></a>2.2 Architecture</h3><p><strong>Complex-YOLO</strong> 网络以RGB鸟瞰图作为输入。它使用一个简化的YOLOv2结构（见表1），由一个复杂的角度回归和E-RPN来检测准确的多类导向的三维物体，同时可以实时运行。</p>
+<p><img src="https://raw.githubusercontent.com/LGNWJQ/picgo/main/complex-yolo/t1.png" alt="t1" style="zoom:67%;" /></p>
+<h4 id="2-2-1-Euler-Region-Proposal"><a href="#2-2-1-Euler-Region-Proposal" class="headerlink" title="2.2.1 Euler-Region-Proposal"></a>2.2.1 Euler-Region-Proposal</h4><p>我们的 <strong>E-RPN</strong> 解析 ：</p>
+<ul>
+<li><p>3D 位置： $b_x、b_y$、</p>
+</li>
+<li><p>目标尺寸（宽度$b_w$和长度 $b_l$）</p>
+</li>
+<li><p>概率 $p_0$、类别分数 $p_1…p_n$ </p>
+</li>
+<li><p>以及最后来自传入特征图的方向 $b_{\phi}$，</p>
+</li>
+<li><p>为了得到正确的方向，我们修改了常用的 Grid-RPN 方法，添加了一个复角：</p>
+<script type="math/tex; mode=display">
+arg(|z|e^{ib_{\phi}})</script></li>
+</ul>
+<script type="math/tex; mode=display">
+\begin{alignat*}{5}
+    &&b_x&=\sigma(t_x) + c_x \\
+    &&b_y&=\sigma(t_y) + c_y \\
+    &&b_{w}&=p_{w}e^{t_w} \\
+    &&b_{l}&=p_{l}e^{t_l} \\
+    &&b_{\phi}&=arg(|z|e^{ib_{\phi}}) = arctan_2(t_{Im}, t_{Re})
+\end{alignat*}</script><p>在此扩展的帮助下，E-RPN 根据直接嵌入网络的虚数和实数部分估计准确的对象方向。对于每个网格单元（32x16 参见表 1），我们预测五个对象，包括概率分数和类别分数，每个对象产生 75 个特征，如图 1 所示。</p>
+<script type="math/tex; mode=display">
+75 = 5 \times (6+1+8)</script><h4 id="2-2-2-Anchor-Box-Design"><a href="#2-2-2-Anchor-Box-Design" class="headerlink" title="2.2.2 Anchor Box Design"></a>2.2.2 Anchor Box Design</h4><center> 图3. 3D Bounding box regression</center>
+
+<p><img src="https://raw.githubusercontent.com/LGNWJQ/picgo/main/complex-yolo/f3.png" alt="f2" style="zoom:67%;" /></p>
+<p>锚箱设计。 YOLOv2 对象检测器预测每个网格单元五个框。所有都用有益的先验进行初始化，即锚框，以便在训练期间更好地收敛。由于角度回归，自由度，即可能先验的数量增加了，但出于效率原因，我们没有扩大预测的数量。因此，我们根据 KITTI 数据集中的框分布，仅定义了三种不同的尺寸和两个角度方向作为先验：</p>
+<ol>
+<li>车辆尺寸（向上）； </li>
+<li>车辆尺寸（朝下）； </li>
+<li>骑车人大小（向上）； </li>
+<li>骑车人大小（朝下）； </li>
+<li>行人大小（向左）。</li>
+</ol>
+<h4 id="2-2-3-Complex-Angle-Regression"><a href="#2-2-3-Complex-Angle-Regression" class="headerlink" title="2.2.3 Complex Angle Regression"></a>2.2.3 Complex Angle Regression</h4><p>每个对象 $b_{\phi}$ 的方向角可以从负责的回归参数t计算，它们对应于复数的相位。</p>
+<script type="math/tex; mode=display">
+arctan2(t_{im}, t_{re})</script><p>即可给出角度。一方面，这避免了奇异性，另一方面，这导致了封闭的数学空间，从而对模型的泛化产生了有利的影响。我们可以将回归参数直接链接到损失函数中</p>
+<h3 id="2-3-Loss-Function"><a href="#2-3-Loss-Function" class="headerlink" title="2.3 Loss Function"></a>2.3 Loss Function</h3><p>我们的网络优化损失函数 L 基于 YOLO 和 YOLOv2 的概念，他们使用引入的多部分损失将 LYolo 定义为误差平方和。我们通过欧拉回归部分 $L_{Euler}$ 扩展了这种方法，以使用复数，这些复数具有用于角度比较的封闭数学空间。这忽略了单角估计常见的奇异点：</p>
+<script type="math/tex; mode=display">
+L = L_{Yolo} + L_{Euler}</script><p>损失函数的欧拉回归部分是在欧拉区域提议的帮助下定义的（见图 3）。假设预测的复数和ground truth之间的差，我们最小化平方误差的绝对值以获得真正的损失：</p>
+<script type="math/tex; mode=display">
+|z|e^{ib_{\phi}} 、 |\hat{z} |e^{i\hat{b_{\phi}} }</script><p> 总是位于单位圆上：</p>
+<script type="math/tex; mode=display">
+|z|=1、|\hat{z}|=1</script><script type="math/tex; mode=display">
+\begin{aligned}
+\mathcal{L}_{\text {Euler }} &=\lambda_{\text {coord }} \sum_{i=0}^{S^{2}} \sum_{j=0}^{B} \mathbb{1}_{i j}^{o b j}\left|\left(e^{\mathrm{i} b_{\phi}}-e^{\mathrm{i} \hat{b}_{\phi}}\right)^{2}\right| \\
+&=\lambda_{\text {coord }} \sum_{i=0}^{S^{2}} \sum_{j=0}^{B} \mathbb{1}_{i j}^{o b j}\left[\left(t_{i m}-\hat{t}_{i m}\right)^{2}+\left(t_{r e}-\hat{t}_{r e}\right)^{2}\right]
+\end{aligned}</script><ul>
+<li>$\lambda_{coord}$：是确保早期阶段稳定收敛的比例因子</li>
+<li>$\mathbb{1}_{i j}^{o b j}$：表示单元$i$中的第 $j$ 个边界框预测器与该预测的地面实况相比具有最高的交并比 (IoU)。</li>
+</ul>
+<p>此外，预测框$P_j$和 ground truth $G$ 之间的比较</p>
+<script type="math/tex; mode=display">
+IOU = \frac{P_j \cap G}{P_j \cup G}</script><p>其中：</p>
+<script type="math/tex; mode=display">
+P_{j} \cap G=\left\{x: x \in P_{j} \wedge x \in G\right\}, P_{j} \cup G\left\{x: x \in P_{j} \vee x \in G\right\}</script><p>调整为可以旋转处理的框。这是通过两个二维多边形几何的交集理论实现的，并分别由相应的框参数生成：</p>
+<script type="math/tex; mode=display">
+b_x、b_y、b_w、b_l 、 b_{\phi}</script><h3 id="2-4-Efficiency-Design"><a href="#2-4-Efficiency-Design" class="headerlink" title="2.4 Efficiency Design"></a>2.4 Efficiency Design</h3><p>使用的网络设计的主要优点是在一次推理过程中预测所有边界框。 E-RPN 是网络的一部分，它使用最后一个卷积层的输出来预测所有的边界框。因此，我们只有一个网络，可以在没有特定训练方法的情况下以端到端的方式进行训练。因此，我们的模型比其他以滑动窗口方式生成区域提议的模型具有更低的运行时间，并预测每个提议的偏移量和类（例如 Faster R-CNN ）。在图 5 中，我们将我们的架构与 KITTI 基准测试中的一些领先模型进行了比较。我们的方法实现了更高的帧速率，同时仍保持可比较的 mAP（平均平均精度）。帧速率直接取自各自的论文，并且都在 Titan X 或 Titan Xp 上进行了测试。我们在 Titan X 和 NVIDIA TX2 板上测试了我们的模型，以强调实时能力（见图 5）</p>
+<center> 图5. 性能比较</center>
+
+<p><img src="https://raw.githubusercontent.com/LGNWJQ/picgo/main/complex-yolo/f5.png" alt="f2" style="zoom:67%;" /></p>
+<blockquote>
+<p>该图显示了与运行时间 (fps) 相关的 mAP。所有型号都在 Nvidia Titan X 或 Titan Xp 上进行了测试。 Complex-Yolo 通过比 KITTI 基准测试中最有效的竞争对手快五倍来实现准确的结果 [1]。我们与五种领先模型进行了比较，并在专用嵌入式平台 (TX2) 上以合理的效率 (4fps) 测量了我们的网络。 Complex-Yolo 是第一个用于实时 3D 对象检测的模型</p>
+</blockquote>
+<h2 id="Training-amp-Experiments"><a href="#Training-amp-Experiments" class="headerlink" title="Training &amp; Experiments"></a>Training &amp; Experiments</h2><p>我们在具有挑战性的 KITTI 对象检测基准 [1] 上评估了 Complex-YOLO，该基准分为<strong>汽车、行人和骑车人</strong>的三个子类别 2D、3D 和鸟瞰对象检测。考虑到对象大小、距离、遮挡和截断，每个类都根据简单、中等和困难三个难度级别进行评估。这个公共数据集提供了 7,481 个训练样本，包括带注释的地面实况和 7,518 个测试样本，其中点云取自 Velodyne 激光扫描仪，其中注释数据是私有的。请注意，我们专注于鸟瞰图并且没有运行 2D 对象检测基准，因为我们的输入仅基于激光雷达</p>
+<h3 id="3-1-Training-Details"><a href="#3-1-Training-Details" class="headerlink" title="3.1 Training Details"></a>3.1 Training Details</h3><p>我们通过随机梯度下降<strong>SGD</strong>从零开始训练我们的模型，<strong>权重衰减为 0.0005</strong>，<strong>动量为 0.9</strong>。我们的实现基于<strong>Darknet神经网络</strong>框架的修改版本。</p>
+<p>首先，我们应用我们的预处理（参见第 2.1 节）从 Velodyne 样本中生成鸟瞰 RGB 图。我们将训练集使用 85% 的比率进行训练，15% 用于验证，因为我们从头开始训练并旨在能够进行多类预测的模型。相反，例如VoxelNet 对不同类别的模型进行了修改和优化。我们受到了可用的地面实况数据的影响，因为它首先用于相机检测。</p>
+<p>数据集中超过75%的汽车、少于4%的骑车人和少于15%的行人的等级分布是不利的。此外，超过 90% 的标注对象面向汽车方向、面向记录汽车或具有相似方向。在顶部，图 4 显示了从鸟瞰角度看空间对象位置的 2D 直方图，其中密集点表示正好在该位置有更多对象。这继承了鸟瞰图的两个盲点。尽管如此，我们还是看到了验证集和其他记录的未标记 KITTI 序列令人惊讶的好的结果，涵盖了几个用例场景，如城市、高速公路或市中心</p>
+<p>对于第一个 epoch，我们从一个小的学习率开始以确保收敛。在一些 epoch 之后，我们提高了学习率，并在 1000 个 epoch 内继续逐渐降低它。由于细粒度的要求，当使用鸟瞰方法时，预测特征的微小变化将对结果框预测产生强烈影响。我们使用批量归一化进行正则化和线性激活 f (x) = x 用于我们 CNN 的最后一层，除了泄漏校正线性激活</p>
+<script type="math/tex; mode=display">
+f(x)=\left\{\begin{array}{ll}
+x, & x>0 \\
+0.1 x, & \text { otherwise }
+\end{array}\right.</script><h3 id="3-2-Evaluation-on-KITTI"><a href="#3-2-Evaluation-on-KITTI" class="headerlink" title="3.2 Evaluation on KITTI"></a>3.2 Evaluation on KITTI</h3><h4 id="Birds-Eye-View"><a href="#Birds-Eye-View" class="headerlink" title="Birds-Eye-View"></a>Birds-Eye-View</h4><p><img src="https://raw.githubusercontent.com/LGNWJQ/picgo/main/complex-yolo/t2.png" alt="f2" style="zoom:67%;" /></p>
+<h4 id="3D-Object-Detection"><a href="#3D-Object-Detection" class="headerlink" title="3D Object Detection"></a>3D Object Detection</h4><p><img src="https://raw.githubusercontent.com/LGNWJQ/picgo/main/complex-yolo/t3.png" alt="f2" style="zoom:67%;" /></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>在本文中，我们提出了第一个实时有效的深度学习模型，用于基于激光雷达的点云的三维物体检测。我们强调了我们在KITTI基准套件上的准确度（见图5），以及超过50 fps的出色效率（NVIDIA Titan X）方面的最新成果。我们不需要额外的传感器，如摄像头，像大多数领先的方法。这一突破是通过引入新的E-RPN实现的，这是一种借助复数估计方向的欧拉回归方法。没有奇异点的封闭数学空间允许强大的角度预测。我们的方法能够在一个前进路径中同时检测多类物体（如汽车、货车、行人、自行车、卡车、有轨电车、坐着的行人、杂物）。这一创新使得在自动驾驶汽车中的实际使用成为可能，并与其他模型明显不同。我们甚至在专用的嵌入式平台NVIDIA TX2（4 fps）上展示了实时能力。在未来的工作中，我们计划将高度信息添加到回归中，以实现真正独立的空间三维物体检测，并在点云预处理中使用节奏空间依赖性，以实现更好的类别区分和提高精度。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">WJQ</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://dl4wjq.github.io/2022/05/01/Complex-YOLO/">https://dl4wjq.github.io/2022/05/01/Complex-YOLO/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://dl4wjq.github.io" target="_blank">Hello ╮(￣▽￣)╭ World</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/python/">python</a><a class="post-meta__tags" href="/tags/DeepLearning/">DeepLearning</a><a class="post-meta__tags" href="/tags/PyTorch/">PyTorch</a><a class="post-meta__tags" href="/tags/Object-Detection/">Object Detection</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/LGNWJQ/picgo/main/img/202111251937858.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/03/28/VoxelNet/"><img class="next-cover" src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/96145490_p0.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">VoxelNet：基于点云的 3D 对象检测的端到端学习</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/03/25/DeepDecFusion/" title="DeepDecFusion"><img class="cover" src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/water.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-25</div><div class="title">DeepDecFusion</div></div></a></div><div><a href="/2022/03/11/DeepFuse/" title="DeepFuse具有极端曝光图像对的曝光融合深度无监督方法"><img class="cover" src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/94603962_p0.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-11</div><div class="title">DeepFuse具有极端曝光图像对的曝光融合深度无监督方法</div></div></a></div><div><a href="/2022/03/18/DenseFuse/" title="DenseFuse：红外和可见光图像的融合方法"><img class="cover" src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/91167833_p0.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-18</div><div class="title">DenseFuse：红外和可见光图像的融合方法</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">WJQ</div><div class="author-info__description">Record my learning</div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/dl4wjq" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/dl2wjq@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Complex-YOLO%EF%BC%9A%E7%94%A8%E4%BA%8E%E7%82%B9%E4%BA%91%E4%B8%8A%E5%AE%9E%E6%97%B6%E4%B8%89%E7%BB%B4%E7%89%A9%E4%BD%93%E6%A3%80%E6%B5%8B%E7%9A%84%E6%AC%A7%E6%8B%89%E5%8C%BA%E5%BB%BA%E8%AE%AE"><span class="toc-number">1.</span> <span class="toc-text">Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Abstract"><span class="toc-number">1.1.</span> <span class="toc-text">Abstract</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-number">1.2.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Related-Work"><span class="toc-number">1.3.</span> <span class="toc-text">Related Work</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Contribution"><span class="toc-number">1.4.</span> <span class="toc-text">Contribution</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Complex-YOLO"><span class="toc-number">1.5.</span> <span class="toc-text">Complex-YOLO</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E7%82%B9%E4%BA%91%E9%A2%84%E5%A4%84%E7%90%86"><span class="toc-number">1.5.1.</span> <span class="toc-text">2.1 点云预处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Architecture"><span class="toc-number">1.5.2.</span> <span class="toc-text">2.2 Architecture</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-1-Euler-Region-Proposal"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">2.2.1 Euler-Region-Proposal</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-2-Anchor-Box-Design"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">2.2.2 Anchor Box Design</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-3-Complex-Angle-Regression"><span class="toc-number">1.5.2.3.</span> <span class="toc-text">2.2.3 Complex Angle Regression</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Loss-Function"><span class="toc-number">1.5.3.</span> <span class="toc-text">2.3 Loss Function</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Efficiency-Design"><span class="toc-number">1.5.4.</span> <span class="toc-text">2.4 Efficiency Design</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Training-amp-Experiments"><span class="toc-number">1.6.</span> <span class="toc-text">Training &amp; Experiments</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Training-Details"><span class="toc-number">1.6.1.</span> <span class="toc-text">3.1 Training Details</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-Evaluation-on-KITTI"><span class="toc-number">1.6.2.</span> <span class="toc-text">3.2 Evaluation on KITTI</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Birds-Eye-View"><span class="toc-number">1.6.2.1.</span> <span class="toc-text">Birds-Eye-View</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3D-Object-Detection"><span class="toc-number">1.6.2.2.</span> <span class="toc-text">3D Object Detection</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-number">1.7.</span> <span class="toc-text">Conclusion</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/05/01/Complex-YOLO/" title="Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议"><img src="https://raw.githubusercontent.com/LGNWJQ/picgo/main/img/202111251937858.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议"/></a><div class="content"><a class="title" href="/2022/05/01/Complex-YOLO/" title="Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议">Complex-YOLO：用于点云上实时三维物体检测的欧拉区建议</a><time datetime="2022-05-01T11:16:18.000Z" title="发表于 2022-05-01 19:16:18">2022-05-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/28/VoxelNet/" title="VoxelNet：基于点云的 3D 对象检测的端到端学习"><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/96145490_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="VoxelNet：基于点云的 3D 对象检测的端到端学习"/></a><div class="content"><a class="title" href="/2022/03/28/VoxelNet/" title="VoxelNet：基于点云的 3D 对象检测的端到端学习">VoxelNet：基于点云的 3D 对象检测的端到端学习</a><time datetime="2022-03-28T06:59:36.000Z" title="发表于 2022-03-28 14:59:36">2022-03-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/25/DeepDecFusion/" title="DeepDecFusion"><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/water.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DeepDecFusion"/></a><div class="content"><a class="title" href="/2022/03/25/DeepDecFusion/" title="DeepDecFusion">DeepDecFusion</a><time datetime="2022-03-25T06:59:36.000Z" title="发表于 2022-03-25 14:59:36">2022-03-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/18/DenseFuse/" title="DenseFuse：红外和可见光图像的融合方法"><img src="https://raw.githubusercontent.com/dl4wjq/BlogImg/main/%E5%8D%9A%E5%AE%A2%E5%B0%81%E9%9D%A2/91167833_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DenseFuse：红外和可见光图像的融合方法"/></a><div class="content"><a class="title" href="/2022/03/18/DenseFuse/" title="DenseFuse：红外和可见光图像的融合方法">DenseFuse：红外和可见光图像的融合方法</a><time datetime="2022-03-18T06:59:36.000Z" title="发表于 2022-03-18 14:59:36">2022-03-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/13/%E5%BE%85%E5%AE%8C%E6%88%90%E5%8D%9A%E5%AE%A2/" title="待完成博客"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="待完成博客"/></a><div class="content"><a class="title" href="/2022/03/13/%E5%BE%85%E5%AE%8C%E6%88%90%E5%8D%9A%E5%AE%A2/" title="待完成博客">待完成博客</a><time datetime="2022-03-13T12:11:36.000Z" title="发表于 2022-03-13 20:11:36">2022-03-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By WJQ</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><div class="aplayer no-destroy" data-id="404184089" data-server="netease" data-type="song" data-fixed="true" data-autoplay="true" data-theme=#2E3092> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
